@@ -1,0 +1,458 @@
+---
+alwaysApply: true
+---
+# Neon Portfolio - Cursor Rules
+
+## Project Identity
+
+This project is a premium interactive 3D portfolio.
+
+It is NOT a traditional website.
+
+It is NOT a game.
+
+It is an immersive product experience built to showcase software engineering skills, product thinking, interaction design, and technical craftsmanship.
+
+Every implementation must improve quality, maintainability, performance, and user experience.
+
+---
+
+# General Principles
+
+Prioritize:
+
+- Simplicity
+- Readability
+- Maintainability
+- Performance
+- Scalability
+- Reusability
+
+Never over-engineer.
+
+Choose the simplest architecture that satisfies the requirements.
+
+---
+
+# Technology Stack
+
+Always use:
+
+- React
+- TypeScript
+- Vite
+- React Three Fiber
+- Three.js
+- Drei
+- Zustand
+- GSAP
+- Framer Motion
+- Tailwind CSS
+
+Also approved by TECHNICAL_SPEC (use when needed):
+
+- Howler.js (event-driven audio)
+- @react-three/postprocessing (bloom, vignette, noise, DoF, tone mapping)
+
+Do not introduce new libraries without explaining why they are necessary.
+
+---
+
+# Architecture
+
+Strictly follow:
+
+- documentation/PRODUCT_VISION.md
+- documentation/TECHNICAL_SPEC.md
+- documentation/ARCHITECTURE.md
+- Current phase documentation under documentation/phases/
+
+Never violate the established architecture.
+
+Respect separation of concerns.
+
+---
+
+# Component Rules
+
+Each component has ONE responsibility.
+
+Prefer many small components over large components.
+
+Target:
+
+100–200 lines per component.
+
+Avoid components exceeding 300 lines unless justified.
+
+---
+
+# TypeScript
+
+Always use strict typing.
+
+Never use:
+
+- any
+- @ts-ignore
+
+Prefer:
+
+- interfaces
+- utility types
+- discriminated unions
+- generics when appropriate
+
+Every prop must be typed.
+
+Every exported function must have an explicit return type when it improves readability.
+
+---
+
+# React Rules
+
+Use:
+
+Functional Components
+
+React Hooks
+
+Composition
+
+Custom hooks
+
+Avoid:
+
+Class components
+
+Prop drilling across many levels
+
+Duplicated logic
+
+Large useEffect blocks
+
+Avoid unnecessary state.
+
+---
+
+# State Management
+
+Global State
+
+Use Zustand only.
+
+Local UI state
+
+Use React state.
+
+Animation state
+
+Never store inside Zustand.
+
+Keep animation state inside GSAP or React Three Fiber.
+
+---
+
+# React Three Fiber
+
+Never place business logic inside render loops.
+
+Use useFrame only for continuous animation.
+
+Dispose GPU resources correctly.
+
+Reuse geometries.
+
+Reuse materials.
+
+Avoid unnecessary object creation.
+
+Prefer instancing when many similar objects exist.
+
+---
+
+# Animation
+
+GSAP
+
+- Camera movement
+- Scene transitions
+- Timelines
+
+Framer Motion
+
+- HTML overlays
+- UI animations
+
+React Three Fiber
+
+- Continuous floating
+- Idle movement
+- Particles
+
+Animations must feel smooth.
+
+Never use abrupt transitions.
+
+---
+
+# Performance
+
+Performance is a feature.
+
+Always consider:
+
+- render count
+- draw calls
+- memory usage
+- shader complexity
+- asset size
+
+Avoid unnecessary rerenders.
+
+Memoize only when there is measurable benefit.
+
+Lazy-load heavy assets.
+
+---
+
+# Folder Structure
+
+Respect the existing architecture.
+
+Do not create new folders unless necessary.
+
+Place files in the correct domain.
+
+Never mix UI, rendering, and business logic.
+
+---
+
+# Imports
+
+Use path aliases.
+
+Example
+
+import { FloatingCard } from "@components/cards"
+
+Never use deep relative imports like:
+
+../../../../../
+
+---
+
+# Styling
+
+Use Tailwind CSS.
+
+Avoid inline styles.
+
+Use design tokens from configuration.
+
+Maintain spacing consistency.
+
+---
+
+# Naming
+
+Components
+
+PascalCase
+
+Functions
+
+camelCase
+
+Variables
+
+camelCase
+
+Constants
+
+UPPER_SNAKE_CASE
+
+Files
+
+PascalCase for React components.
+
+camelCase or kebab-case for utilities depending on project convention.
+
+Use descriptive names.
+
+Never abbreviate important concepts.
+
+---
+
+# Magic Numbers
+
+Never hardcode values.
+
+Move configurable values into:
+
+config/
+
+Examples
+
+Camera speed
+
+Bloom intensity
+
+Animation duration
+
+Light intensity
+
+Card spacing
+
+Fog density
+
+Colors
+
+---
+
+# Reusability
+
+If logic is repeated twice,
+
+consider extracting it.
+
+If repeated three times,
+
+extract it.
+
+Build reusable systems instead of one-off solutions.
+
+---
+
+# Comments
+
+Write comments only when they explain WHY.
+
+Do not comment obvious code.
+
+Example
+
+Good:
+
+// Smooth interpolation prevents motion sickness.
+
+Bad:
+
+// Increment x by one.
+
+---
+
+# Error Handling
+
+Fail gracefully.
+
+Provide fallback behavior.
+
+Never allow runtime crashes because of missing assets.
+
+Always validate external data.
+
+---
+
+# Accessibility
+
+Support:
+
+Keyboard navigation
+
+Reduced motion
+
+Semantic HTML
+
+Readable contrast
+
+Visible focus states
+
+Accessibility is required.
+
+---
+
+# Assets
+
+Optimize all assets.
+
+Prefer:
+
+AVIF
+
+WebP
+
+GLB
+
+Compressed textures
+
+Compressed audio
+
+Never commit oversized assets.
+
+---
+
+# Code Quality
+
+No duplicated logic.
+
+No dead code.
+
+No console.log in production.
+
+No unused imports.
+
+No unused variables.
+
+No TODO comments without context.
+
+---
+
+# Git
+
+Generate clean commits.
+
+One feature per commit.
+
+Keep pull requests focused.
+
+---
+
+# Before Writing Code
+
+Always think through:
+
+1. Is this reusable?
+2. Is this the simplest solution?
+3. Does it respect the architecture?
+4. Will it scale?
+5. Does it improve user experience?
+6. Is it performant?
+
+Only then implement.
+
+---
+
+# When Generating Code
+
+Always:
+
+- Explain architectural decisions.
+- Generate production-ready code.
+- Follow project conventions.
+- Keep files modular.
+- Preserve type safety.
+- Optimize for readability first.
+- Keep future expansion in mind.
+
+Never sacrifice maintainability for cleverness.
+
+---
+
+# Project Goal
+
+Every line of code should contribute to one objective:
+
+Build a portfolio that convinces a recruiter to schedule an interview.
+
+If a feature does not improve that goal, question whether it belongs in the project.
