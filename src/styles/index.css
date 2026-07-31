@@ -15,6 +15,9 @@ body,
   overflow: hidden;
   background: var(--color-void);
   font-family: var(--font-display);
+  /* Prevent pull-to-refresh / pinch scroll fighting the canvas on touch. */
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 body {

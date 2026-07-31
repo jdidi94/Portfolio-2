@@ -5,7 +5,12 @@ import { SceneFog } from "@scene/environment/Fog";
 import { AmbientParticles } from "@scene/environment/AmbientParticles";
 import { Lighting } from "@scene/lighting/Lighting";
 import { DecorativeObjects } from "@scene/objects/DecorativeObjects";
-import { PlaceholderObjects } from "@scene/objects/PlaceholderObjects";
+import { ContentSections } from "@scene/sections/ContentSections";
+import { AboutCharacter } from "@scene/sections/AboutCharacter";
+import { ProjectCarousel } from "@scene/sections/ProjectCarousel";
+import { ExperienceRow } from "@scene/sections/ExperienceRow";
+import { TechHive } from "@scene/sections/TechHive";
+import { Elevator } from "@scene/sections/Elevator";
 import { PostProcessing } from "@renderer/PostProcessing";
 
 export function SceneRoot(): JSX.Element {
@@ -17,7 +22,12 @@ export function SceneRoot(): JSX.Element {
       <Lighting />
       <AmbientParticles />
       <DecorativeObjects />
-      <PlaceholderObjects />
+      <ContentSections />
+      <AboutCharacter />
+      <ProjectCarousel />
+      <ExperienceRow />
+      <TechHive />
+      <Elevator />
       <PostProcessing />
     </>
   );

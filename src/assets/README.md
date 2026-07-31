@@ -8,6 +8,9 @@ Place production media here. Do not commit oversized masters.
 **Category checklist:**  
 [documentation/ASSET_REQUIREMENTS.md](../../documentation/ASSET_REQUIREMENTS.md)
 
+**3D models — role & placement:**  
+[documentation/MODELS_3D_README.md](../../documentation/MODELS_3D_README.md)
+
 ## Layout
 
 ```text

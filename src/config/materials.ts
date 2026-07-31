@@ -1,9 +1,16 @@
 export const MATERIAL_PRESETS = {
+  frostedCard: {
+    metalness: 0.35,
+    roughness: 0.32,
+    opacity: 0.22,
+    emissiveIntensity: 0.85,
+    wireframe: false,
+  },
   neonGlass: {
-    metalness: 0.85,
-    roughness: 0.22,
-    opacity: 0.62,
-    emissiveIntensity: 1.35,
+    metalness: 0.7,
+    roughness: 0.3,
+    opacity: 0.32,
+    emissiveIntensity: 1.05,
     wireframe: false,
   },
   neonWire: {
@@ -18,13 +25,6 @@ export const MATERIAL_PRESETS = {
     roughness: 0.28,
     opacity: 0.9,
     emissiveIntensity: 1.6,
-    wireframe: false,
-  },
-  frostedCard: {
-    metalness: 0.55,
-    roughness: 0.18,
-    opacity: 0.55,
-    emissiveIntensity: 1.1,
     wireframe: false,
   },
   metalAccent: {

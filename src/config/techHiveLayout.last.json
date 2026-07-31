@@ -1,0 +1,22 @@
+{
+  "params": {
+    "parentScale": 8.5,
+    "parentOffsetX": 0,
+    "parentOffsetY": 0,
+    "parentOffsetZ": -0.35,
+    "childSpacing": 1.65,
+    "childMargin": 0.12,
+    "childModelScale": 1.15,
+    "clusterOffsetX": 0,
+    "clusterOffsetY": 0,
+    "cameraDistance": 11.5,
+    "cameraEyeHeight": 0.2,
+    "cellCameraDistance": 4.8,
+    "visibleCountDesktop": 19,
+    "visibleCountMid": 13,
+    "floatAmplitude": 0.04
+  },
+  "measures": {
+    "note": "Overwrite this file manually after Log measures in the Tech Hive layout panel."
+  }
+}

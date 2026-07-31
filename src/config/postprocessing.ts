@@ -1,19 +1,30 @@
 export const POSTPROCESSING_CONFIG = {
   bloom: {
-    intensity: 0.5,
-    luminanceThreshold: 0.38,
-    luminanceSmoothing: 0.4,
+    /** Kept low so white card text does not bloom into a halo. */
+    intensity: 0.22,
+    /** Above typical face text luminance so copy stays sharp. */
+    luminanceThreshold: 0.78,
+    luminanceSmoothing: 0.55,
+  },
+  /** Softer bloom while a card is focused for readable detail copy. */
+  bloomFocus: {
+    intensity: 0.12,
+    luminanceThreshold: 0.88,
+    luminanceSmoothing: 0.65,
   },
   vignette: {
     offset: 0.28,
-    darkness: 0.5,
+    darkness: 0.45,
   },
   noise: {
-    opacity: 0.03,
+    opacity: 0.012,
   },
   depthOfField: {
-    focalLength: 0.035,
-    bokehScale: 1.1,
-    focusRange: 0.04,
+    /** Mild explore atmosphere only — disabled while reading focused cards. */
+    enabledInExplore: true,
+    enabledInFocus: false,
+    focalLength: 0.018,
+    bokehScale: 0.35,
+    focusRange: 0.1,
   },
 } as const;

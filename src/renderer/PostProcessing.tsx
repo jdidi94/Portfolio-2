@@ -15,10 +15,15 @@ import { cameraMotion } from "@scene/camera/cameraMotion";
 import { useExperienceStore } from "@store/experienceStore";
 import { Vector3 } from "three";
 
+/**
+ * Atmosphere FX. Bloom + DoF are dialed to avoid smearing card text;
+ * DoF turns off in focus mode so detail copy stays sharp.
+ */
 export function PostProcessing(): JSX.Element | null {
   const prefersReducedMotion = useExperienceStore(
     (s) => s.prefersReducedMotion,
   );
+  const mode = useExperienceStore((s) => s.mode);
   const focusTarget = useMemo(() => new Vector3(), []);
 
   useFrame(() => {
@@ -29,21 +34,44 @@ export function PostProcessing(): JSX.Element | null {
     return null;
   }
 
-  const { bloom, vignette, noise, depthOfField } = POSTPROCESSING_CONFIG;
+  const { bloom, bloomFocus, vignette, noise, depthOfField } =
+    POSTPROCESSING_CONFIG;
+  const isFocus = mode === "focus";
+  const activeBloom = isFocus ? bloomFocus : bloom;
+  const showDof =
+    !isFocus &&
+    mode !== "transition" &&
+    depthOfField.enabledInExplore;
+
+  if (showDof) {
+    return (
+      <EffectComposer multisampling={0} enableNormalPass={false}>
+        <Bloom
+          intensity={activeBloom.intensity}
+          luminanceThreshold={activeBloom.luminanceThreshold}
+          luminanceSmoothing={activeBloom.luminanceSmoothing}
+          mipmapBlur
+        />
+        <DepthOfField
+          target={focusTarget}
+          focalLength={depthOfField.focalLength}
+          bokehScale={depthOfField.bokehScale}
+          focusRange={depthOfField.focusRange}
+        />
+        <Noise opacity={noise.opacity} />
+        <Vignette offset={vignette.offset} darkness={vignette.darkness} />
+        <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+      </EffectComposer>
+    );
+  }
 
   return (
     <EffectComposer multisampling={0} enableNormalPass={false}>
       <Bloom
-        intensity={bloom.intensity}
-        luminanceThreshold={bloom.luminanceThreshold}
-        luminanceSmoothing={bloom.luminanceSmoothing}
+        intensity={activeBloom.intensity}
+        luminanceThreshold={activeBloom.luminanceThreshold}
+        luminanceSmoothing={activeBloom.luminanceSmoothing}
         mipmapBlur
-      />
-      <DepthOfField
-        target={focusTarget}
-        focalLength={depthOfField.focalLength}
-        bokehScale={depthOfField.bokehScale}
-        focusRange={depthOfField.focusRange}
       />
       <Noise opacity={noise.opacity} />
       <Vignette offset={vignette.offset} darkness={vignette.darkness} />

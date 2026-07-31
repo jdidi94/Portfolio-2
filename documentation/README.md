@@ -9,6 +9,8 @@ Authoritative product and engineering docs for the immersive 3D portfolio.
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Folders, ownership, state, data flow |
 | [ASSETS_README.md](./ASSETS_README.md) | Per-phase asset inventory (name, type, size, path) |
 | [ASSET_REQUIREMENTS.md](./ASSET_REQUIREMENTS.md) | Category checklist (brand, models, audio, SEO, …) |
+| [MODELS_3D_README.md](./MODELS_3D_README.md) | 3D GLB roles, where to use, design compliance |
+| [MOBILE_RESPONSIVE.md](./MOBILE_RESPONSIVE.md) | Small-viewport section rails (Back/Skip, item swipe) |
 
 ## Phases
 

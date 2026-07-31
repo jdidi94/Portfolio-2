@@ -2,8 +2,9 @@ import { useMemo, useRef } from "react";
 import type { JSX, ReactNode } from "react";
 import { useFrame } from "@react-three/fiber";
 import { FLOAT_CONFIG } from "@config/float";
+import { CARD_CONFIG } from "@config/cards";
 import { useExperienceStore } from "@store/experienceStore";
-import type { Group } from "three";
+import { MathUtils, type Group } from "three";
 
 interface FloatProps {
   children: ReactNode;
@@ -29,6 +30,7 @@ export function Float({
     [phase],
   );
   const baseY = useRef<number | null>(null);
+  const amplitudeCurrent = useRef(amplitude);
 
   useFrame((state, delta) => {
     const group = groupRef.current;
@@ -40,13 +42,22 @@ export function Float({
       baseY.current = group.position.y;
     }
 
-    if (prefersReducedMotion) {
+    const lambda = 4 / Math.max(0.05, CARD_CONFIG.transitionDuration);
+    amplitudeCurrent.current = MathUtils.damp(
+      amplitudeCurrent.current,
+      prefersReducedMotion ? 0 : amplitude,
+      lambda,
+      delta,
+    );
+
+    if (amplitudeCurrent.current <= 0.0005) {
       group.position.y = baseY.current;
       return;
     }
 
     const t = state.clock.elapsedTime * speed + resolvedPhase;
-    group.position.y = baseY.current + Math.sin(t) * amplitude;
+    group.position.y =
+      baseY.current + Math.sin(t) * amplitudeCurrent.current;
     group.rotation.y += delta * rotationSpeed;
   });
 

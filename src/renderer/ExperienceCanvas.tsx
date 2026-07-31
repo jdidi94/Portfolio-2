@@ -4,25 +4,20 @@ import { ACESFilmicToneMapping } from "three";
 import { RENDERER_CONFIG } from "@config/renderer";
 import { COLORS } from "@config/colors";
 import { SceneRoot } from "@scene/SceneRoot";
-import { ExperienceManager } from "@experience/ExperienceManager";
-import { useExperienceStore } from "@store/experienceStore";
-import { EXPLORE_WAYPOINT_ID } from "@config/waypoints";
+import { NavigationManager } from "@experience/NavigationManager";
+import { useViewportStore } from "@store/viewportStore";
 
+/** Clicking empty scene space returns directly to the overview. */
 function handlePointerMissed(): void {
-  const { cameraDestinationId, focusObjectId } = useExperienceStore.getState();
-  if (
-    cameraDestinationId === EXPLORE_WAYPOINT_ID &&
-    focusObjectId === null
-  ) {
-    return;
-  }
-  ExperienceManager.returnToExplore();
+  NavigationManager.goHome();
 }
 
 export function ExperienceCanvas(): JSX.Element {
+  const dprMax = useViewportStore((s) => s.dprMax);
+
   return (
     <Canvas
-      dpr={[RENDERER_CONFIG.dprMin, RENDERER_CONFIG.dprMax]}
+      dpr={[RENDERER_CONFIG.dprMin, dprMax]}
       gl={{
         antialias: RENDERER_CONFIG.antialias,
         alpha: false,

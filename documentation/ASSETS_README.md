@@ -385,4 +385,5 @@ N = number of featured projects in `src/data/projects.ts`.
 
 For category-oriented brainstorming (what *kinds* of assets exist), use [ASSET_REQUIREMENTS.md](./ASSET_REQUIREMENTS.md).  
 For **AI prompts** and **free download sources**, see [ASSET_REQUIREMENTS.md — AI Prompts & Free Sources](./ASSET_REQUIREMENTS.md#ai-prompts--free-sources).  
+For **3D model roles and where each GLB is used**, see [MODELS_3D_README.md](./MODELS_3D_README.md).  
 For architecture placement rules, use [ARCHITECTURE.md](./ARCHITECTURE.md).

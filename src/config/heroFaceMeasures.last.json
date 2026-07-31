@@ -1,0 +1,30 @@
+{
+  "params": {
+    "shape": "hexagon",
+    "inset": 1,
+    "widthScale": 1,
+    "heightScale": 1,
+    "recess": 0.02,
+    "offsetX": 0,
+    "offsetY": 0,
+    "offsetZ": 0,
+    "cornerRadius": 0.08,
+    "modelScale": 2.4,
+    "showMeasureHelper": false
+  },
+  "measures": {
+    "placeholderSize": [0.8652, 0.998, 0.1543],
+    "placeholderCenter": [0, 0.499, 0],
+    "placeholderFrontZ": 0.0771,
+    "faceWidth": 0.8642933529768697,
+    "faceHeight": 0.998,
+    "visualWidth": 0.8642933529768697,
+    "visualHeight": 0.998,
+    "inset": 1,
+    "widthScale": 1,
+    "heightScale": 1,
+    "recess": 0.02,
+    "offset": [0, 0, 0.0571],
+    "shape": "hexagon"
+  }
+}

@@ -1,9 +1,15 @@
 import type { ExperienceSection } from "@experience/ExperienceState";
+import { sectionForObjectId } from "@config/sections";
 import { useExperienceStore } from "@store/experienceStore";
 
-/** Placeholder section activation for later content phases. */
+/** Activates portfolio sections from focus targets. */
 export const SectionManager = {
   activate(section: ExperienceSection): void {
+    useExperienceStore.getState().setActiveSection(section);
+  },
+
+  activateFromObjectId(objectId: string): void {
+    const section = sectionForObjectId(objectId);
     useExperienceStore.getState().setActiveSection(section);
   },
 
