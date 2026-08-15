@@ -1,28 +1,29 @@
 import type { TimelineEvent } from "@shared-types/content";
 import { IMAGE_ASSETS } from "@config/assets";
 
-/** Career milestones — continuous learning narrative. */
+/** Template career milestones — replace with your own narrative. */
 export const timeline: readonly TimelineEvent[] = [
   {
-    id: "2016-chemistry",
+    id: "2016-degree",
     year: 2016,
-    title: "Degree in Chemistry",
-    description: "University of Science of Monastir (FSM) — analytical foundation before software.",
+    title: "Bachelor of Science",
+    description: "Example University — analytical foundation before software.",
     category: "education",
   },
   {
-    id: "2021-rbk",
+    id: "2021-bootcamp",
     year: 2021,
     title: "Fullstack JavaScript graduation",
-    description: "RBK RebootKamp / Hack Reactor — shipped team products with modern JS stack.",
+    description: "Example Bootcamp — shipped team products with modern JS stack.",
     category: "education",
-    relatedCertificateIds: ["rbk-fullstack"],
+    relatedCertificateIds: ["fullstack-cert"],
   },
   {
     id: "2022-marketplace",
     year: 2022,
     title: "Marketplace & platform products",
-    description: "Tunisian Fann auctions and ticketing microservices — realtime and cloud delivery.",
+    description:
+      "Artisan marketplace auctions and ticketing microservices — realtime and cloud delivery.",
     category: "project",
     media: IMAGE_ASSETS.tunisianFannCover,
     relatedProjectIds: ["tunisian-fann", "ticketing-platform"],
@@ -41,7 +42,7 @@ export const timeline: readonly TimelineEvent[] = [
     description: "Neon Portfolio — cinematic R3F experience as a product-quality showcase.",
     category: "project",
     media: IMAGE_ASSETS.neonPortfolioCover,
-    link: "https://github.com/jdidi94/Portfolio-2",
+    link: "https://github.com/example/neon-portfolio",
     relatedProjectIds: ["neon-portfolio"],
   },
   {

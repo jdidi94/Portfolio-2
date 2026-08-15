@@ -5,6 +5,7 @@ import { useViewportStore } from "@store/viewportStore";
 import { WAYPOINTS } from "@config/waypoints";
 import { profile } from "@data/profile";
 import { socialLinks } from "@data/social";
+import { getResumeDownloadName } from "@utils/resumeDownloadName";
 
 /** Thin chrome — content lives on glass card faces; CTAs stay reachable. */
 export function ExperienceHud(): JSX.Element {
@@ -67,7 +68,9 @@ export function ExperienceHud(): JSX.Element {
                 rel={
                   link.icon === "email" ? undefined : "noopener noreferrer"
                 }
-                download={link.icon === "resume" ? "Jdidi_Daoud_Resume.pdf" : undefined}
+                download={
+                  link.icon === "resume" ? getResumeDownloadName() : undefined
+                }
                 className={`rounded-sm border border-white/15 bg-black/45 tracking-wide text-cyan-100/85 backdrop-blur-sm transition hover:border-cyan-300/40 hover:text-cyan-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300/70 ${
                   isSmall
                     ? "px-2 py-0.5 text-[9px]"
@@ -138,7 +141,7 @@ export function ExperienceHud(): JSX.Element {
         {!isSmall ? (
           <a
             href={profile.resumeUrl}
-            download="Jdidi_Daoud_Resume.pdf"
+            download={getResumeDownloadName()}
             className="pointer-events-auto rounded-sm border border-cyan-400/30 bg-cyan-500/10 px-3 py-1.5 text-xs tracking-wide text-cyan-100/90 backdrop-blur-sm transition hover:border-cyan-300/50 hover:bg-cyan-500/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300/70"
           >
             Download resume

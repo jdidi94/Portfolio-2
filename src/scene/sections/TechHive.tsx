@@ -12,7 +12,7 @@ import {
   mobileOrderedTechnologies,
 } from "@config/mobileNav";
 import { technologies } from "@data/technologies";
-import type { Technology } from "@types";
+import type { Technology } from "@shared-types/content";
 import { FloatingCard } from "@components/cards/FloatingCard";
 import { TechHiveChildren } from "@scene/sections/TechHiveChildren";
 import { useExperienceStore } from "@store/experienceStore";

@@ -2,8 +2,8 @@ import type { Project } from "@shared-types/content";
 import { IMAGE_ASSETS, VIDEO_ASSETS } from "@config/assets";
 
 /**
- * Featured projects from resume + this portfolio.
- * Image/video paths are Unsplash / sample placeholders — replace with real media.
+ * Template projects — replace titles, copy, and links with your own work.
+ * Image/video paths are placeholders — swap media via config/assets.
  */
 export const projects: readonly Project[] = [
   {
@@ -26,7 +26,7 @@ export const projects: readonly Project[] = [
     ],
     architectureImage: IMAGE_ASSETS.neonPortfolioArchitecture,
     video: VIDEO_ASSETS.neonPortfolioPreview,
-    github: "https://github.com/jdidi94/Portfolio-2",
+    github: "https://github.com/example/neon-portfolio",
     lessonsLearned:
       "Keep animation state out of Zustand; drive content from typed data; treat performance as a feature.",
     duration: "Ongoing",
@@ -35,21 +35,21 @@ export const projects: readonly Project[] = [
   },
   {
     id: "tunisian-fann",
-    title: "Tunisian Fann",
-    subtitle: "Art marketplace with realtime auctions",
+    title: "Artisan Marketplace",
+    subtitle: "Creative marketplace with realtime auctions",
     category: "E-commerce / Fullstack",
     description:
-      "E-commerce platform connecting art enthusiasts with artists — including realtime auctions and direct sales.",
+      "E-commerce platform connecting creators with buyers — including realtime auctions and direct sales.",
     problem:
-      "Artists lacked a focused digital marketplace that supported both fixed sales and live bidding.",
+      "Creators lacked a focused digital marketplace that supported both fixed sales and live bidding.",
     solution:
-      "Vue + Vuex storefront with Express/Node backend on DigitalOcean; realtime auction flows and SCRUM delivery.",
+      "Vue + Vuex storefront with Express/Node backend; realtime auction flows and SCRUM delivery.",
     outcome:
       "Shipped a production marketplace with auction and direct-sale paths, backlog prioritization, and GitHub workflow.",
     technologies: ["Vue", "Vuex", "Express", "Node.js", "DigitalOcean"],
     images: [IMAGE_ASSETS.tunisianFannCover, IMAGE_ASSETS.tunisianFannGallery],
     video: VIDEO_ASSETS.tunisianFannPreview,
-    github: "https://github.com/jdidi94",
+    github: "https://github.com/example/artisan-marketplace",
     lessonsLearned:
       "Realtime bidding needs clear state ownership; SCRUM backlog discipline keeps stakeholder goals aligned.",
     duration: "Team project",
@@ -83,7 +83,7 @@ export const projects: readonly Project[] = [
     ],
     architectureImage: IMAGE_ASSETS.ticketingArchitecture,
     video: VIDEO_ASSETS.ticketingPreview,
-    github: "https://github.com/jdidi94",
+    github: "https://github.com/example/ticketing-platform",
     lessonsLearned:
       "Reusable packages and CI/CD reduce drift across services; test early across purchase and entry flows.",
     duration: "Team project",
@@ -92,15 +92,15 @@ export const projects: readonly Project[] = [
   },
   {
     id: "med-purchase",
-    title: "Medication Purchase Interface",
+    title: "Pharmacy Order App",
     subtitle: "Mobile ordering + payments",
     category: "Mobile / Fullstack",
     description:
-      "Web and mobile interfaces for purchasing medication with order tracking and secure payments.",
+      "Web and mobile interfaces for purchasing pharmacy products with order tracking and secure payments.",
     problem:
-      "Medication ordering needed role-aware auth, tracking, and a reliable payment path.",
+      "Pharmacy ordering needed role-aware auth, tracking, and a reliable payment path.",
     solution:
-      "React Native + Express + MySQL with Socket.io, Sequelize, Flouci payments, and multi-role authentication.",
+      "React Native + Express + MySQL with Socket.io, Sequelize, Stripe payments, and multi-role authentication.",
     outcome:
       "Delivered order tracking, secure payments, and role migration for safer access control.",
     technologies: [
@@ -109,10 +109,10 @@ export const projects: readonly Project[] = [
       "Sequelize",
       "Express",
       "MySQL",
-      "Flouci",
+      "Stripe",
     ],
     images: [IMAGE_ASSETS.medPurchaseCover],
-    github: "https://github.com/jdidi94",
+    github: "https://github.com/example/pharmacy-order-app",
     lessonsLearned:
       "Payment and role boundaries must be explicit; realtime status improves trust in order flows.",
     duration: "Product engagement",

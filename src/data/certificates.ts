@@ -1,10 +1,11 @@
 import type { Certificate } from "@shared-types/content";
 
+/** Template certificates — replace with your own credentials. */
 export const certificates: readonly Certificate[] = [
   {
-    id: "rbk-fullstack",
+    id: "fullstack-cert",
     title: "Full Stack JavaScript Developer",
-    issuer: "RBK RebootKamp / Hack Reactor",
+    issuer: "Example Bootcamp",
     year: 2021,
   },
 ] as const;

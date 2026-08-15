@@ -2,8 +2,7 @@ import type { Experience } from "@shared-types/content";
 import { IMAGE_ASSETS } from "@config/assets";
 
 /**
- * Professional experience — two freelance product engagements + RBK full-time.
- * Freelance entries are derived from shipped client/product work on the resume.
+ * Template experience — replace companies, dates, and copy with your own.
  */
 export const experience: readonly Experience[] = [
   {
@@ -11,7 +10,7 @@ export const experience: readonly Experience[] = [
     company: "Independent / client product work",
     position: "Fullstack Product Engineer",
     employmentType: "freelance",
-    location: "Remote · Tunisia",
+    location: "Remote",
     startDate: "2021-04",
     endDate: "2022-10",
     responsibilities: [
@@ -40,7 +39,7 @@ export const experience: readonly Experience[] = [
     company: "Independent / platform engagements",
     position: "Platform Engineer",
     employmentType: "freelance",
-    location: "Remote · Tunisia",
+    location: "Remote",
     startDate: "2021-06",
     endDate: "2022-10",
     responsibilities: [
@@ -64,11 +63,11 @@ export const experience: readonly Experience[] = [
     ],
   },
   {
-    id: "rbk-fullstack-lead",
-    company: "RBK / product engagements",
+    id: "studio-fullstack-lead",
+    company: "Example Product Studio",
     position: "Fullstack Software Engineer (Team Lead & Mentor)",
     employmentType: "full-time",
-    location: "Ariana, Tunisia",
+    location: "Remote",
     startDate: "2022-11",
     endDate: "2025-10",
     responsibilities: [
@@ -98,5 +97,5 @@ export const experience: readonly Experience[] = [
 export const EXPERIENCE_COVER_BY_ID: Record<string, string> = {
   "freelance-product-apps": IMAGE_ASSETS.tunisianFannCover,
   "freelance-platform-systems": IMAGE_ASSETS.ticketingCover,
-  "rbk-fullstack-lead": IMAGE_ASSETS.neonPortfolioCover,
+  "studio-fullstack-lead": IMAGE_ASSETS.neonPortfolioCover,
 };

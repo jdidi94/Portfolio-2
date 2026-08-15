@@ -7,6 +7,7 @@ import { socialLinks } from "@data/social";
 import { useExperienceStore } from "@store/experienceStore";
 import { useMobileMenuStore } from "@store/mobileMenuStore";
 import { useViewportStore } from "@store/viewportStore";
+import { getResumeDownloadName } from "@utils/resumeDownloadName";
 
 /**
  * Fullscreen purple-neon menu — resume, contact, social, audio, journey instructions.
@@ -116,7 +117,7 @@ export function MobileMenuOverlay(): JSX.Element | null {
                     }
                     download={
                       link.icon === "resume"
-                        ? "Jdidi_Daoud_Resume.pdf"
+                        ? getResumeDownloadName()
                         : undefined
                     }
                     className="rounded-sm border border-purple-300/30 bg-purple-500/10 px-4 py-3 text-sm tracking-wide text-purple-50 transition hover:border-purple-200/50 hover:bg-purple-500/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-300/70"
