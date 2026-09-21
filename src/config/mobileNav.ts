@@ -104,7 +104,95 @@ export const MOBILE_NAV_CONFIG = {
   timelineFocusDistance: 3.55,
   timelineFocusEyeHeight: 0.28,
   timelineCardModelScale: 1.72,
+  /**
+   * Sections that show swipe-direction arrows on small.
+   * Second = About, third = Projects, plus Timeline stairs.
+   */
+  scrollArrowSectionIds: ["about", "projects", "timeline"] as const,
+  /**
+   * Timeline swipe / wheel is inverted vs About vertical scroll
+   * (swipe up walks earlier milestones).
+   */
+  timelineInvertScroll: true,
 } as const;
+
+/** Rail sections that render movement arrows on mobile. */
+export type MobileScrollArrowSectionId =
+  (typeof MOBILE_NAV_CONFIG.scrollArrowSectionIds)[number];
+
+export function showsMobileScrollArrows(sectionId: string): boolean {
+  return (MOBILE_NAV_CONFIG.scrollArrowSectionIds as readonly string[]).includes(
+    sectionId,
+  );
+}
+
+/**
+ * Maps a swipe to stepItem delta.
+ * Timeline vertical is inverted vs About (`timelineInvertScroll`).
+ */
+export function mobileStepDeltaForSwipe(
+  sectionId: string,
+  axis: MobileItemAxis,
+  dx: number,
+  dy: number,
+): number | null {
+  if (axis === "none") return null;
+
+  if (axis === "x") {
+    // Swipe left → next.
+    return dx < 0 ? 1 : -1;
+  }
+
+  // Vertical metaphor (y / z / page).
+  const swipeUp = dy < 0;
+  if (
+    sectionId === "timeline" &&
+    MOBILE_NAV_CONFIG.timelineInvertScroll
+  ) {
+    // Opposite of About: swipe up → previous.
+    return swipeUp ? -1 : 1;
+  }
+  return swipeUp ? 1 : -1;
+}
+
+/** Wheel / trackpad: positive deltaY (finger up / content down) → step. */
+export function mobileStepDeltaForWheel(
+  sectionId: string,
+  primaryDelta: number,
+): number {
+  const forward = primaryDelta > 0 ? 1 : -1;
+  if (
+    sectionId === "timeline" &&
+    MOBILE_NAV_CONFIG.timelineInvertScroll
+  ) {
+    return -forward;
+  }
+  return forward;
+}
+
+/**
+ * Arrow button: `upOrLeft` means the ↑ / ← control.
+ * Matches the swipe that control represents after timeline invert.
+ */
+export function mobileStepDeltaForArrow(
+  sectionId: string,
+  axis: MobileItemAxis,
+  upOrLeft: boolean,
+): number {
+  if (axis === "x") {
+    // ← = swipe left = next.
+    return upOrLeft ? 1 : -1;
+  }
+  if (
+    sectionId === "timeline" &&
+    MOBILE_NAV_CONFIG.timelineInvertScroll
+  ) {
+    // ↑ = swipe up = previous when inverted.
+    return upOrLeft ? -1 : 1;
+  }
+  // ↑ = swipe up = next.
+  return upOrLeft ? 1 : -1;
+}
 
 function orderedTechnologies(): Technology[] {
   return sortTechnologiesForHiveCluster(

@@ -8,6 +8,7 @@ import { ProjectCaseStudyPanel } from "@components/ui/ProjectCaseStudyPanel";
 import { ExperienceRolePanel } from "@components/ui/ExperienceRolePanel";
 import { MilestonePanel } from "@components/ui/MilestonePanel";
 import { MobileSectionRail } from "@components/ui/MobileSectionRail";
+import { MobileScrollArrows } from "@components/ui/MobileScrollArrows";
 import { MobileMenuButton } from "@components/ui/MobileMenuButton";
 import { MobileMenuOverlay } from "@components/ui/MobileMenuOverlay";
 import { AppLoadingScreen } from "@components/ui/AppLoadingScreen";
@@ -126,6 +127,7 @@ export function AppExperience(): JSX.Element {
         <>
           <MobileMenuButton />
           <MobileMenuOverlay />
+          <MobileScrollArrows />
           <MobileSectionRail />
         </>
       ) : null}

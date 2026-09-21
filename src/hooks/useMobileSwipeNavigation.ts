@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
-import { MOBILE_NAV_CONFIG } from "@config/mobileNav";
+import {
+  MOBILE_NAV_CONFIG,
+  mobileStepDeltaForSwipe,
+} from "@config/mobileNav";
 import {
   useMobileActiveRail,
   useMobileNavStore,
@@ -22,6 +25,7 @@ function isUiTouchTarget(target: EventTarget | null): boolean {
 /**
  * Touch swipe → mobileNav.stepItem on small viewports.
  * Axis follows the active rail (x / y / z / page).
+ * Timeline vertical swipe is inverted vs About.
  */
 export function useMobileSwipeNavigation(): void {
   const startRef = useRef<{ x: number; y: number } | null>(null);
@@ -43,7 +47,6 @@ export function useMobileSwipeNavigation(): void {
         startRef.current = null;
         return;
       }
-      // Allow tracking while a panel is open — end may nudge instead of navigate.
       const touch = event.touches[0];
       if (!touch) return;
       startRef.current = { x: touch.clientX, y: touch.clientY };
@@ -79,21 +82,31 @@ export function useMobileSwipeNavigation(): void {
       lastStepAtRef.current = now;
 
       const axis = rail?.axis ?? "none";
+      const sectionId = rail?.sectionId ?? "hero";
+
       if (axis === "x") {
         if (absX < threshold) return;
-        // Swipe left → next item (finger moves left, content advances).
-        useMobileNavStore.getState().stepItem(dx < 0 ? 1 : -1);
-        return;
-      }
-
-      // y / z / page / none — vertical metaphor.
-      if (absY < threshold && axis !== "none") {
-        if (absX >= threshold) {
-          useMobileNavStore.getState().stepItem(dx < 0 ? 1 : -1);
+        const delta = mobileStepDeltaForSwipe(sectionId, axis, dx, dy);
+        if (delta !== null) {
+          useMobileNavStore.getState().stepItem(delta);
         }
         return;
       }
-      useMobileNavStore.getState().stepItem(dy < 0 ? 1 : -1);
+
+      // y / z / page — prefer vertical; allow horizontal fallback.
+      if (absY < threshold && axis !== "none") {
+        if (absX >= threshold) {
+          useMobileNavStore
+            .getState()
+            .stepItem(mobileStepDeltaForSwipe(sectionId, "x", dx, dy) ?? 0);
+        }
+        return;
+      }
+
+      const delta = mobileStepDeltaForSwipe(sectionId, axis, dx, dy);
+      if (delta !== null) {
+        useMobileNavStore.getState().stepItem(delta);
+      }
     };
 
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -102,5 +115,5 @@ export function useMobileSwipeNavigation(): void {
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchend", onTouchEnd);
     };
-  }, [tier, rail?.axis]);
+  }, [tier, rail?.axis, rail?.sectionId]);
 }

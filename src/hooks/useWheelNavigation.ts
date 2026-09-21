@@ -1,8 +1,14 @@
 import { useEffect, useRef } from "react";
-import { MOBILE_NAV_CONFIG } from "@config/mobileNav";
+import {
+  MOBILE_NAV_CONFIG,
+  mobileRailForStopId,
+  mobileStepDeltaForWheel,
+} from "@config/mobileNav";
 import { NAVIGATION_CONFIG } from "@config/navigation";
 import { NavigationManager } from "@experience/NavigationManager";
+import { sectionStopForObjectId } from "@config/sections";
 import { useMobileNavStore } from "@store/mobileNavStore";
+import { useExperienceStore } from "@store/experienceStore";
 import { useViewportStore } from "@store/viewportStore";
 import { useMobileMenuStore } from "@store/mobileMenuStore";
 import { anyPanelOpen, nudgeIfPanelOpen } from "@utils/panelGate";
@@ -71,7 +77,18 @@ export function useWheelNavigation(): void {
           Math.abs(event.deltaY) >= Math.abs(event.deltaX)
             ? event.deltaY
             : event.deltaX;
-        useMobileNavStore.getState().stepItem(primary > 0 ? 1 : -1);
+        const focusObjectId = useExperienceStore.getState().focusObjectId;
+        const stopId =
+          focusObjectId !== null
+            ? (sectionStopForObjectId(focusObjectId) ?? focusObjectId)
+            : null;
+        const sectionId =
+          stopId !== null
+            ? (mobileRailForStopId(stopId)?.sectionId ?? "hero")
+            : "hero";
+        useMobileNavStore
+          .getState()
+          .stepItem(mobileStepDeltaForWheel(sectionId, primary));
         return;
       }
 
