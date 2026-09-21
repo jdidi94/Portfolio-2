@@ -105,10 +105,14 @@ export const MOBILE_NAV_CONFIG = {
   timelineFocusEyeHeight: 0.28,
   timelineCardModelScale: 1.72,
   /**
-   * Sections that show swipe-direction arrows on small.
-   * Second = About, third = Projects, plus Timeline stairs.
+   * Sections that can show a bottom-right swipe guide when the visitor
+   * seems stuck (idle without a successful step).
    */
   scrollArrowSectionIds: ["about", "projects", "timeline"] as const,
+  /** Idle time before the scroll guide appears. */
+  scrollHintIdleMs: 2400,
+  /** How long the guide stays visible once shown. */
+  scrollHintVisibleMs: 4800,
   /**
    * Timeline swipe / wheel is inverted vs About vertical scroll
    * (swipe up walks earlier milestones).
@@ -128,6 +132,7 @@ export function showsMobileScrollArrows(sectionId: string): boolean {
 
 /**
  * Maps a swipe to stepItem delta.
+ * `axis: "none"` (Hero / Contact) still advances sections vertically.
  * Timeline vertical is inverted vs About (`timelineInvertScroll`).
  */
 export function mobileStepDeltaForSwipe(
@@ -136,14 +141,12 @@ export function mobileStepDeltaForSwipe(
   dx: number,
   dy: number,
 ): number | null {
-  if (axis === "none") return null;
-
   if (axis === "x") {
     // Swipe left → next.
     return dx < 0 ? 1 : -1;
   }
 
-  // Vertical metaphor (y / z / page).
+  // Vertical metaphor (y / z / page / none).
   const swipeUp = dy < 0;
   if (
     sectionId === "timeline" &&

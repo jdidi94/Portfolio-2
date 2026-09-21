@@ -1,9 +1,8 @@
-import type { JSX } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, type JSX } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  mobileStepDeltaForArrow,
-  showsMobileScrollArrows,
   MOBILE_NAV_CONFIG,
+  showsMobileScrollArrows,
 } from "@config/mobileNav";
 import {
   useMobileActiveRail,
@@ -33,8 +32,8 @@ function ArrowGlyph({
 
   return (
     <svg
-      width={18}
-      height={18}
+      width={14}
+      height={14}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -50,13 +49,13 @@ function ArrowGlyph({
 }
 
 /**
- * Swipe-direction arrows for About, Projects, and Timeline on small.
- * Buttons step the rail the same way the matching swipe would.
+ * Bottom-right swipe guide for About / Projects / Timeline.
+ * Appears only after idle (confused visitor); non-interactive.
  */
 export function MobileScrollArrows(): JSX.Element | null {
   const tier = useViewportStore((s) => s.tier);
   const rail = useMobileActiveRail();
-  const stepItem = useMobileNavStore((s) => s.stepItem);
+  const itemIndex = useMobileNavStore((s) => s.itemIndex);
   const prefersReducedMotion = useExperienceStore(
     (s) => s.prefersReducedMotion,
   );
@@ -68,6 +67,7 @@ export function MobileScrollArrows(): JSX.Element | null {
     (s) => s.selectedExperienceId,
   );
   const selectedTechId = useTechHiveStore((s) => s.selectedTechId);
+  const [visible, setVisible] = useState(false);
 
   const panelOpen =
     selectedProjectId !== null ||
@@ -75,97 +75,136 @@ export function MobileScrollArrows(): JSX.Element | null {
     selectedExperienceId !== null ||
     selectedTechId !== null;
 
-  if (
-    tier !== "small" ||
-    !rail ||
-    focusObjectId === null ||
-    menuOpen ||
-    panelOpen ||
-    !showsMobileScrollArrows(rail.sectionId) ||
-    rail.itemCount <= 1 ||
-    rail.axis === "none"
-  ) {
+  const canHint =
+    tier === "small" &&
+    rail !== null &&
+    focusObjectId !== null &&
+    !menuOpen &&
+    !panelOpen &&
+    showsMobileScrollArrows(rail.sectionId) &&
+    rail.itemCount > 1 &&
+    rail.axis !== "none";
+
+  // Reset / schedule hint when the rail context changes or after idle.
+  useEffect(() => {
+    setVisible(false);
+    if (!canHint || !rail) {
+      return;
+    }
+
+    const showTimer = window.setTimeout(() => {
+      setVisible(true);
+    }, MOBILE_NAV_CONFIG.scrollHintIdleMs);
+
+    return () => {
+      window.clearTimeout(showTimer);
+    };
+  }, [canHint, rail?.stopId, rail?.sectionId, itemIndex]);
+
+  // Auto-hide after the guide has been on screen long enough.
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    const hideTimer = window.setTimeout(() => {
+      setVisible(false);
+    }, MOBILE_NAV_CONFIG.scrollHintVisibleMs);
+    return () => {
+      window.clearTimeout(hideTimer);
+    };
+  }, [visible]);
+
+  if (!canHint || !rail) {
     return null;
   }
 
   const horizontal = rail.axis === "x";
   const invertedTimeline =
-    rail.sectionId === "timeline" &&
-    MOBILE_NAV_CONFIG.timelineInvertScroll;
-  const primaryDir = horizontal ? "left" : "up";
-  const secondaryDir = horizontal ? "right" : "down";
-  const primaryLabel = horizontal
-    ? "Next item"
+    rail.sectionId === "timeline" && MOBILE_NAV_CONFIG.timelineInvertScroll;
+  const hintLabel = horizontal
+    ? "Swipe sideways"
     : invertedTimeline
-      ? "Previous milestone"
-      : "Next item";
-  const secondaryLabel = horizontal
-    ? "Previous item"
-    : invertedTimeline
-      ? "Next milestone"
-      : "Previous item";
-
-  const bounce = prefersReducedMotion
-    ? undefined
-    : horizontal
-      ? { x: [0, -5, 0] }
-      : { y: [0, -5, 0] };
-  const bounceOpposite = prefersReducedMotion
-    ? undefined
-    : horizontal
-      ? { x: [0, 5, 0] }
-      : { y: [0, 5, 0] };
-
-  const buttonClass =
-    "pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-cyan-400/35 bg-black/65 text-cyan-100/90 backdrop-blur-sm transition hover:border-cyan-300/55 hover:bg-cyan-500/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300/70";
+      ? "Swipe up / down"
+      : "Swipe up / down";
 
   return (
-    <div
-      role="group"
-      aria-label="Item scroll hints"
-      className={`pointer-events-none absolute z-20 flex ${
-        horizontal
-          ? "inset-y-0 left-0 right-0 items-center justify-between px-2"
-          : "inset-x-0 top-[max(4.5rem,env(safe-area-inset-top))] bottom-[max(4.5rem,env(safe-area-inset-bottom))] flex-col items-center justify-between py-2"
-      }`}
-    >
-      <motion.button
-        type="button"
-        aria-label={primaryLabel}
-        className={buttonClass}
-        animate={bounce}
-        transition={
-          prefersReducedMotion
-            ? undefined
-            : { duration: 1.35, repeat: Infinity, ease: "easeInOut" }
-        }
-        onClick={() => {
-          stepItem(
-            mobileStepDeltaForArrow(rail.sectionId, rail.axis, true),
-          );
-        }}
-      >
-        <ArrowGlyph direction={primaryDir} />
-      </motion.button>
-
-      <motion.button
-        type="button"
-        aria-label={secondaryLabel}
-        className={buttonClass}
-        animate={bounceOpposite}
-        transition={
-          prefersReducedMotion
-            ? undefined
-            : { duration: 1.35, repeat: Infinity, ease: "easeInOut", delay: 0.15 }
-        }
-        onClick={() => {
-          stepItem(
-            mobileStepDeltaForArrow(rail.sectionId, rail.axis, false),
-          );
-        }}
-      >
-        <ArrowGlyph direction={secondaryDir} />
-      </motion.button>
-    </div>
+    <AnimatePresence>
+      {visible ? (
+        <motion.div
+          key={`${rail.stopId}-scroll-hint`}
+          role="status"
+          aria-live="polite"
+          aria-label={hintLabel}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 6 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="pointer-events-none absolute right-[max(0.75rem,env(safe-area-inset-right))] bottom-[max(4.75rem,calc(env(safe-area-inset-bottom)+3.75rem))] z-20 flex flex-col items-center gap-1 rounded-sm border border-cyan-400/25 bg-black/70 px-2.5 py-2 text-cyan-100/85 backdrop-blur-sm"
+        >
+          <div className="flex items-center gap-1.5">
+            {horizontal ? (
+              <>
+                <motion.span
+                  animate={
+                    prefersReducedMotion ? undefined : { x: [0, -3, 0] }
+                  }
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <ArrowGlyph direction="left" />
+                </motion.span>
+                <motion.span
+                  animate={
+                    prefersReducedMotion ? undefined : { x: [0, 3, 0] }
+                  }
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.12,
+                  }}
+                >
+                  <ArrowGlyph direction="right" />
+                </motion.span>
+              </>
+            ) : (
+              <>
+                <motion.span
+                  animate={
+                    prefersReducedMotion ? undefined : { y: [0, -3, 0] }
+                  }
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <ArrowGlyph direction="up" />
+                </motion.span>
+                <motion.span
+                  animate={
+                    prefersReducedMotion ? undefined : { y: [0, 3, 0] }
+                  }
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.12,
+                  }}
+                >
+                  <ArrowGlyph direction="down" />
+                </motion.span>
+              </>
+            )}
+          </div>
+          <p className="text-[9px] tracking-[0.18em] text-cyan-200/70 uppercase">
+            Scroll
+          </p>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }

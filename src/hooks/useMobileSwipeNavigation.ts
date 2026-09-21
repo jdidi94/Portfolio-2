@@ -93,12 +93,13 @@ export function useMobileSwipeNavigation(): void {
         return;
       }
 
-      // y / z / page — prefer vertical; allow horizontal fallback.
-      if (absY < threshold && axis !== "none") {
+      // y / z / page / none — prefer vertical; allow horizontal fallback.
+      if (absY < threshold) {
         if (absX >= threshold) {
-          useMobileNavStore
-            .getState()
-            .stepItem(mobileStepDeltaForSwipe(sectionId, "x", dx, dy) ?? 0);
+          const delta = mobileStepDeltaForSwipe(sectionId, "x", dx, dy);
+          if (delta !== null) {
+            useMobileNavStore.getState().stepItem(delta);
+          }
         }
         return;
       }
