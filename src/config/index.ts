@@ -37,6 +37,12 @@ export {
 } from "@config/aboutCharacter";
 export { DEV_TOOLS_CONFIG } from "@config/devTools";
 export {
+  SEO_CONFIG,
+  absoluteSeoUrl,
+  linkedInShareUrl,
+  twitterShareUrl,
+} from "@config/seo";
+export {
   CARD_FACE_TYPE_DEFAULTS,
   formatCardFaceTypeLog,
 } from "@config/cardFaceType";

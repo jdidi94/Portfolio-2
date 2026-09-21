@@ -37,6 +37,10 @@ export const ENV = {
     "VITE_GITHUB_PORTFOLIO",
     "https://github.com/jdidi94/Portfolio-2",
   ),
+  /** Public origin for Open Graph / share links (no trailing slash). */
+  siteUrl: readEnv("VITE_SITE_URL", "https://jdidi94.github.io"),
+  /** Optional @handle for Twitter cards. */
+  twitterHandle: readEnv("VITE_TWITTER_HANDLE", ""),
 } as const;
 
 export type EnvConfig = typeof ENV;

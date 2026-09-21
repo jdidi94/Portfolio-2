@@ -6,6 +6,7 @@ import { WAYPOINTS } from "@config/waypoints";
 import { profile } from "@data/profile";
 import { socialLinks } from "@data/social";
 import { SocialLinkIcons } from "@components/ui/SocialLinkIcons";
+import { SocialShareButtons } from "@components/ui/SocialShareButtons";
 import { getResumeDownloadName } from "@utils/resumeDownloadName";
 
 /** Thin chrome — content lives on glass card faces; CTAs stay reachable. */
@@ -62,6 +63,11 @@ export function ExperienceHud(): JSX.Element {
             tone="cyan"
             size={isSmall ? "sm" : "md"}
             className="mt-3"
+          />
+          <SocialShareButtons
+            tone="cyan"
+            size={isSmall ? "sm" : "md"}
+            className="mt-2"
           />
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">

@@ -5,6 +5,8 @@ export const COLORS = {
   electricBlue: "#3B82F6",
   purple: "#8B5CF6",
   cyan: "#22D3EE",
+  /** Live demo / status signal. */
+  live: "#EF4444",
 } as const;
 
 export type ColorToken = (typeof COLORS)[keyof typeof COLORS];

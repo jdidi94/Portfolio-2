@@ -23,3 +23,40 @@ body,
 body {
   min-width: 320px;
 }
+
+@keyframes live-badge-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.28;
+  }
+}
+
+@keyframes live-dot-blink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.15;
+    transform: scale(0.75);
+  }
+}
+
+.live-badge-blink {
+  animation: live-badge-blink 1.15s ease-in-out infinite;
+}
+
+.live-dot-blink {
+  animation: live-dot-blink 1.15s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-badge-blink,
+  .live-dot-blink {
+    animation: none;
+  }
+}

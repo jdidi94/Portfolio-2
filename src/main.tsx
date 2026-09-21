@@ -1,7 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "@app/App";
+import { applySeoTags } from "@utils/applySeoTags";
 import "@styles/index.css";
+
+applySeoTags();
 
 const rootElement = document.getElementById("root");
 

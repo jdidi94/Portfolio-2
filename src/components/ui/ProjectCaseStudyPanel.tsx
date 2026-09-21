@@ -55,9 +55,24 @@ export function ProjectCaseStudyPanel(): JSX.Element {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
               <div className="absolute right-3 bottom-3 left-3">
-                <p className="text-[10px] tracking-[0.28em] text-cyan-200/80 uppercase">
-                  {project.category}
-                </p>
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <p className="text-[10px] tracking-[0.28em] text-cyan-200/80 uppercase">
+                    {project.category}
+                  </p>
+                  {project.liveDemo ? (
+                    <span
+                      role="status"
+                      aria-label="Live demo available"
+                      className="inline-flex items-center gap-1.5 rounded-sm border border-red-400/55 bg-red-500/20 px-2 py-0.5 text-[10px] font-bold tracking-[0.22em] text-red-300 uppercase live-badge-blink"
+                    >
+                      <span
+                        className="size-1.5 shrink-0 rounded-full bg-red-500 live-dot-blink"
+                        aria-hidden
+                      />
+                      Live
+                    </span>
+                  ) : null}
+                </div>
                 <h2 className="font-[family-name:var(--font-display)] text-xl tracking-wide text-white">
                   {project.title}
                 </h2>

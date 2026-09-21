@@ -68,6 +68,19 @@ export const CARD_CONFIG = {
   floatAmplitude: 0.02,
   floatSpeed: 0.22,
   rotationSpeed: 0,
+  /**
+   * First-section portrait wash — dark enough for white type,
+   * light enough to keep the hologram readable.
+   */
+  heroCover: {
+    imageAlpha: 1,
+    /** Uniform dark filter over the full face. */
+    darkFilter: 0.48,
+    /** Extra bottom gradient for title / CTA contrast. */
+    bottomVeilStart: 0.38,
+    bottomVeilMid: 0.55,
+    bottomVeilEnd: 0.82,
+  },
   colors: {
     hero: COLORS.cyan,
     project: COLORS.electricBlue,

@@ -10,6 +10,7 @@ import {
   CARD_FACE_TYPE_DEFAULTS,
   type CardFaceTypeParams,
 } from "@config/cardFaceType";
+import { CARD_CONFIG } from "@config/cards";
 import { drawCardVariantIcon } from "@utils/drawCardVariantIcon";
 
 export type CardFaceDisplayMode = "overview" | "detail";
@@ -229,6 +230,27 @@ function sourceImage(
   return image ?? null;
 }
 
+/** Object-fit: cover into the face rectangle. */
+function drawCoverCover(
+  ctx: CanvasRenderingContext2D,
+  cover: CanvasImageSource,
+  width: number,
+  height: number,
+): void {
+  const iw =
+    "naturalWidth" in cover && cover.naturalWidth
+      ? cover.naturalWidth
+      : (cover as CanvasImageSource & { width?: number }).width || width;
+  const ih =
+    "naturalHeight" in cover && cover.naturalHeight
+      ? cover.naturalHeight
+      : (cover as CanvasImageSource & { height?: number }).height || height;
+  const scale = Math.max(width / Math.max(1, iw), height / Math.max(1, ih));
+  const drawW = iw * scale;
+  const drawH = ih * scale;
+  ctx.drawImage(cover, (width - drawW) / 2, (height - drawH) / 2, drawW, drawH);
+}
+
 /**
  * Word-wrap into lines (no draw). Truncates with an ellipsis when content exceeds `maxLines`.
  */
@@ -428,13 +450,34 @@ function paintBackground(
   if (options.cover) {
     const cover = sourceImage(options.cover);
     if (cover) {
-      ctx.globalAlpha = dimCover ? 0.22 : 0.32;
-      ctx.drawImage(cover, 0, 0, width, height);
+      const isHero = options.variant === "hero";
+      const photoCard =
+        options.variant === "project" || options.variant === "experience";
+      const heroCover = CARD_CONFIG.heroCover;
+      ctx.globalAlpha = isHero
+        ? heroCover.imageAlpha
+        : photoCard
+          ? dimCover
+            ? 0.72
+            : 0.55
+          : dimCover
+            ? 0.22
+            : 0.32;
+      drawCoverCover(ctx, cover, width, height);
       ctx.globalAlpha = 1;
-      ctx.fillStyle = dimCover
-        ? "rgba(5, 5, 8, 0.78)"
-        : "rgba(5, 5, 8, 0.7)";
-      ctx.fillRect(0, 0, width, height);
+      if (isHero) {
+        ctx.fillStyle = `rgba(5, 5, 8, ${heroCover.darkFilter})`;
+        ctx.fillRect(0, 0, width, height);
+      } else {
+        ctx.fillStyle = photoCard
+          ? dimCover
+            ? "rgba(5, 5, 8, 0.42)"
+            : "rgba(5, 5, 8, 0.55)"
+          : dimCover
+            ? "rgba(5, 5, 8, 0.78)"
+            : "rgba(5, 5, 8, 0.7)";
+        ctx.fillRect(0, 0, width, height);
+      }
     }
   } else if (options.pattern) {
     const pattern = sourceImage(options.pattern);
@@ -446,24 +489,67 @@ function paintBackground(
   }
 
   if (dimCover) {
-    const glow = ctx.createRadialGradient(
-      width / 2,
-      height * 0.42,
-      height * 0.05,
-      width / 2,
-      height * 0.42,
-      height * 0.55,
-    );
-    glow.addColorStop(0, `${options.accent}22`);
-    glow.addColorStop(1, "rgba(5, 5, 8, 0)");
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, width, height);
+    const isHero = options.variant === "hero";
+    const photoCard =
+      Boolean(options.cover) &&
+      (options.variant === "project" || options.variant === "experience");
+    if (isHero && options.cover) {
+      const heroCover = CARD_CONFIG.heroCover;
+      const bottom = ctx.createLinearGradient(
+        0,
+        height * heroCover.bottomVeilStart,
+        0,
+        height,
+      );
+      bottom.addColorStop(0, "rgba(5, 5, 8, 0)");
+      bottom.addColorStop(
+        0.55,
+        `rgba(5, 5, 8, ${heroCover.bottomVeilMid})`,
+      );
+      bottom.addColorStop(1, `rgba(5, 5, 8, ${heroCover.bottomVeilEnd})`);
+      ctx.fillStyle = bottom;
+      ctx.fillRect(0, 0, width, height);
+    } else if (photoCard) {
+      const bottom = ctx.createLinearGradient(0, height * 0.45, 0, height);
+      bottom.addColorStop(0, "rgba(5, 5, 8, 0)");
+      bottom.addColorStop(0.45, "rgba(5, 5, 8, 0.35)");
+      bottom.addColorStop(1, "rgba(5, 5, 8, 0.88)");
+      ctx.fillStyle = bottom;
+      ctx.fillRect(0, 0, width, height);
+    } else {
+      const glow = ctx.createRadialGradient(
+        width / 2,
+        height * 0.42,
+        height * 0.05,
+        width / 2,
+        height * 0.42,
+        height * 0.55,
+      );
+      glow.addColorStop(0, `${options.accent}22`);
+      glow.addColorStop(1, "rgba(5, 5, 8, 0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, width, height);
+    }
   } else {
-    const gradient = ctx.createLinearGradient(0, height * 0.28, 0, height);
-    gradient.addColorStop(0, "rgba(5, 5, 8, 0.15)");
-    gradient.addColorStop(1, "rgba(5, 5, 8, 0.92)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
+    if (options.variant === "hero" && options.cover) {
+      const heroCover = CARD_CONFIG.heroCover;
+      const bottom = ctx.createLinearGradient(
+        0,
+        height * heroCover.bottomVeilStart,
+        0,
+        height,
+      );
+      bottom.addColorStop(0, "rgba(5, 5, 8, 0)");
+      bottom.addColorStop(1, `rgba(5, 5, 8, ${heroCover.bottomVeilEnd})`);
+      ctx.fillStyle = bottom;
+      ctx.fillRect(0, 0, width, height);
+    } else {
+      const gradient = ctx.createLinearGradient(0, height * 0.28, 0, height);
+      gradient.addColorStop(0, "rgba(5, 5, 8, 0.15)");
+      gradient.addColorStop(1, "rgba(5, 5, 8, 0.92)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+    }
   }
 }
 
@@ -564,6 +650,56 @@ function paintOverview(
   const bounds = contentBounds(width, height, shape);
   const { maxTextWidth, padTop, padBottom } = bounds;
   const availableH = height - padTop - padBottom;
+
+  const hasPhotoCover =
+    Boolean(options.cover && sourceImage(options.cover)) &&
+    (options.variant === "project" ||
+      options.variant === "experience" ||
+      options.variant === "hero");
+
+  // Photo cards: title + section over the still; skip the large variant icon.
+  if (hasPhotoCover) {
+    const titleSize = Math.round(type.overviewTitleSize * unit);
+    const titleLineHeight = Math.round(type.overviewTitleLineHeight * unit);
+    const titleMaxLines = pointed
+      ? type.overviewTitleMaxLinesHex
+      : type.overviewTitleMaxLinesRect;
+    const sectionLabel = (options.sectionLabel ?? "Section").toUpperCase();
+    const sectionSize = Math.round(type.overviewSectionSize * unit);
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+
+    const bottomY = height - padBottom - Math.round(24 * unit);
+    ctx.font = `700 ${titleSize}px ${fontStack}`;
+    const titleH = measureWrappedHeight(
+      ctx,
+      options.title,
+      maxTextWidth,
+      titleLineHeight,
+      titleMaxLines,
+    );
+    const sectionH = sectionSize;
+    const stackH = sectionH + Math.round(28 * unit) + titleH;
+    let cursorY = bottomY - stackH;
+
+    ctx.font = `600 ${sectionSize}px ${fontStack}`;
+    fillSharpText(ctx, sectionLabel, cx, cursorY + sectionH, options.accent);
+    cursorY += sectionH + Math.round(28 * unit);
+
+    ctx.font = `700 ${titleSize}px ${fontStack}`;
+    ctx.fillStyle = "#E8EEF6";
+    wrapText(
+      ctx,
+      options.title,
+      cx,
+      cursorY,
+      maxTextWidth,
+      titleLineHeight,
+      titleMaxLines,
+    );
+    return;
+  }
 
   const iconSize = Math.round(height * (pointed ? 0.28 : 0.3));
   const afterIconGap = Math.round(iconSize * 0.72);

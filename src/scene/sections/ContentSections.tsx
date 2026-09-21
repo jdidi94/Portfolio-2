@@ -32,7 +32,7 @@ function resolveCardCopy(placement: (typeof CONTENT_CARD_PLACEMENTS)[number]): {
         title: profile.name,
         subtitle: profile.title,
         bodyLines: [profile.availability, profile.callToAction],
-        coverUrl: profile.portraitUrl ?? IMAGE_ASSETS.heroCover,
+        coverUrl: IMAGE_ASSETS.heroPortraitHologram,
         patternKey: CARD_CONFIG.facePattern.hero,
       };
     case "skill": {

@@ -5,6 +5,7 @@ import { audioManager } from "@audio/AudioManager";
 import { profile } from "@data/profile";
 import { socialLinks } from "@data/social";
 import { SocialLinkIcons } from "@components/ui/SocialLinkIcons";
+import { SocialShareButtons } from "@components/ui/SocialShareButtons";
 import { useExperienceStore } from "@store/experienceStore";
 import { useMobileMenuStore } from "@store/mobileMenuStore";
 import { useViewportStore } from "@store/viewportStore";
@@ -121,6 +122,7 @@ export function MobileMenuOverlay(): JSX.Element | null {
                   showLabels
                   layout="grid"
                 />
+                <SocialShareButtons tone="purple" size="md" className="justify-center" />
               </nav>
             </section>
 
