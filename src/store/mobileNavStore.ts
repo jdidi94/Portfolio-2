@@ -42,6 +42,8 @@ interface MobileNavState {
   goPrevSection: () => void;
   stepItem: (delta: number) => void;
   setItemIndex: (index: number) => void;
+  /** Jump to a section stop at item 0 (used to enter Hero on mobile boot). */
+  enterSection: (stopId: string) => void;
 }
 
 function closeAllPanels(): void {
@@ -110,11 +112,18 @@ function buildCameraTarget(
       ? MOBILE_NAV_CONFIG.techFocusDistance
       : rail?.sectionId === "timeline"
         ? MOBILE_NAV_CONFIG.timelineFocusDistance
-        : MOBILE_NAV_CONFIG.focusDistance;
+        : rail?.sectionId === "hero"
+          ? MOBILE_NAV_CONFIG.heroFocusDistance
+          : rail?.sectionId === "contact" ||
+              (rail?.sectionId === "about" && itemIndex === 0)
+            ? MOBILE_NAV_CONFIG.sectionCardFocusDistance
+            : MOBILE_NAV_CONFIG.focusDistance;
   const eyeHeight =
-    rail?.sectionId === "timeline"
-      ? MOBILE_NAV_CONFIG.timelineFocusEyeHeight
-      : MOBILE_NAV_CONFIG.focusEyeHeight;
+    rail?.sectionId === "skills"
+      ? MOBILE_NAV_CONFIG.techFocusEyeHeight
+      : rail?.sectionId === "timeline"
+        ? MOBILE_NAV_CONFIG.timelineFocusEyeHeight
+        : MOBILE_NAV_CONFIG.focusEyeHeight;
   const framing = resolveMobileCardFraming(
     sectionLookAt(stopId),
     distance,
@@ -158,6 +167,11 @@ export const useMobileNavStore = create<MobileNavState>((set, get) => {
       if (!rail) return;
       const clamped = Math.max(0, Math.min(rail.itemCount - 1, index));
       focusRailItem(stopId, clamped);
+    },
+
+    enterSection: (stopId) => {
+      if (!SECTION_NAV_STOPS.includes(stopId)) return;
+      focusRailItem(stopId, 0);
     },
 
     goNextSection: () => {

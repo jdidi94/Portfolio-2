@@ -9,7 +9,7 @@ export const skills: readonly Skill[] = [
     icon: "react",
     yearsOfExperience: 4,
     description: "Component systems, hooks, and performance-aware UI for web products.",
-    relatedProjectIds: ["neon-portfolio", "med-purchase"],
+    relatedProjectIds: ["taskflow-ai", "neon-portfolio", "med-purchase"],
   },
   {
     id: "typescript",
@@ -18,7 +18,7 @@ export const skills: readonly Skill[] = [
     icon: "typescript",
     yearsOfExperience: 4,
     description: "Strict typing across apps, APIs, and shared domain models.",
-    relatedProjectIds: ["neon-portfolio", "ticketing-platform"],
+    relatedProjectIds: ["fallah-smart", "taskflow-ai", "neon-portfolio"],
   },
   {
     id: "threejs",
@@ -36,7 +36,13 @@ export const skills: readonly Skill[] = [
     icon: "nodejs",
     yearsOfExperience: 3,
     description: "APIs, gateways, realtime services, and production backends.",
-    relatedProjectIds: ["tunisian-fann", "ticketing-platform", "med-purchase"],
+    relatedProjectIds: [
+      "fallah-smart",
+      "taskflow-ai",
+      "tunisian-fann",
+      "ticketing-platform",
+      "med-purchase",
+    ],
   },
   {
     id: "react-native",
@@ -45,7 +51,7 @@ export const skills: readonly Skill[] = [
     icon: "react",
     yearsOfExperience: 3,
     description: "Cross-platform mobile apps with shared product logic.",
-    relatedProjectIds: ["med-purchase"],
+    relatedProjectIds: ["fallah-smart", "med-purchase"],
   },
   {
     id: "devops",

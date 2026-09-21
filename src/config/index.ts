@@ -1,13 +1,20 @@
 export { COLORS } from "@config/colors";
+export { ENV } from "@config/env";
 export { CAMERA_CONFIG } from "@config/camera";
 export { LIGHTING_CONFIG } from "@config/lighting";
 export { RENDERER_CONFIG } from "@config/renderer";
+export {
+  PERFORMANCE_CONFIG,
+  resolveParticleScale,
+  resolveEffectiveDprMax,
+} from "@config/performance";
+export type { PerformanceQuality } from "@config/performance";
 export { FOG_CONFIG } from "@config/fog";
 export { FLOAT_CONFIG } from "@config/float";
 export { POSTPROCESSING_CONFIG } from "@config/postprocessing";
 export { AUDIO_CONFIG } from "@config/audio";
 export { PARTICLES_CONFIG } from "@config/particles";
-export { NAVIGATION_CONFIG } from "@config/navigation";
+export { NAVIGATION_CONFIG, PANEL_NUDGE_CONFIG } from "@config/navigation";
 export { TECH_HIVE_CONFIG } from "@config/techHive";
 export {
   TECH_HIVE_LAYOUT_DEFAULTS,
@@ -83,9 +90,14 @@ export {
   resolveMobileRails,
   resolveMobileItemObjectId,
   mobileOrderedTechnologies,
+  mobileTechRailItems,
   technologiesForMobilePage,
 } from "@config/mobileNav";
-export type { MobileItemAxis, MobileSectionRailConfig } from "@config/mobileNav";
+export type {
+  MobileItemAxis,
+  MobileSectionRailConfig,
+  MobileTechRailItem,
+} from "@config/mobileNav";
 export {
   CARD_MODEL_SCALE,
 } from "@config/cardGeometry";

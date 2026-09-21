@@ -11,7 +11,7 @@ export const CAMERA_CONFIG = {
   fov: 42,
   near: 0.1,
   far: 280,
-  position: [0, 1.2, 8] as [number, number, number],
+  position: [0, 1.2, 5.33] as [number, number, number],
   lookAt: [0, 0, 0] as [number, number, number],
   transitionDuration: 2.9,
   transitionEase: "power3.inOut",

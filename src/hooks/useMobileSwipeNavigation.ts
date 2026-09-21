@@ -5,11 +5,8 @@ import {
   useMobileNavStore,
 } from "@store/mobileNavStore";
 import { useViewportStore } from "@store/viewportStore";
-import { useProjectCarouselStore } from "@store/projectCarouselStore";
-import { useElevatorStore } from "@store/elevatorStore";
-import { useExperiencePanelStore } from "@store/experiencePanelStore";
-import { useTechHiveStore } from "@store/techHiveStore";
 import { useMobileMenuStore } from "@store/mobileMenuStore";
+import { anyPanelOpen, nudgeIfPanelOpen } from "@utils/panelGate";
 
 function isUiTouchTarget(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) {
@@ -20,19 +17,6 @@ function isUiTouchTarget(target: EventTarget | null): boolean {
       "button, input, textarea, select, aside, a, [data-allow-scroll]",
     ),
   );
-}
-
-function anyPanelOpen(): boolean {
-  return (
-    useProjectCarouselStore.getState().selectedProjectId !== null ||
-    useElevatorStore.getState().selectedEventId !== null ||
-    useExperiencePanelStore.getState().selectedExperienceId !== null ||
-    useTechHiveStore.getState().selectedTechId !== null
-  );
-}
-
-function navigationBlocked(): boolean {
-  return anyPanelOpen() || useMobileMenuStore.getState().isOpen;
 }
 
 /**
@@ -51,10 +35,15 @@ export function useMobileSwipeNavigation(): void {
     }
 
     const onTouchStart = (event: TouchEvent): void => {
-      if (isUiTouchTarget(event.target) || navigationBlocked()) {
+      if (isUiTouchTarget(event.target)) {
         startRef.current = null;
         return;
       }
+      if (useMobileMenuStore.getState().isOpen) {
+        startRef.current = null;
+        return;
+      }
+      // Allow tracking while a panel is open — end may nudge instead of navigate.
       const touch = event.touches[0];
       if (!touch) return;
       startRef.current = { x: touch.clientX, y: touch.clientY };
@@ -63,7 +52,7 @@ export function useMobileSwipeNavigation(): void {
     const onTouchEnd = (event: TouchEvent): void => {
       const start = startRef.current;
       startRef.current = null;
-      if (!start || navigationBlocked()) return;
+      if (!start || useMobileMenuStore.getState().isOpen) return;
 
       const touch = event.changedTouches[0];
       if (!touch) return;
@@ -75,6 +64,11 @@ export function useMobileSwipeNavigation(): void {
       const threshold = MOBILE_NAV_CONFIG.swipeThresholdPx;
 
       if (absX < threshold && absY < threshold) {
+        return;
+      }
+
+      if (anyPanelOpen()) {
+        nudgeIfPanelOpen();
         return;
       }
 

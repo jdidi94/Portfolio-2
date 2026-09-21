@@ -26,10 +26,12 @@ import neonEmissionUrl from "@assets/textures/metal/texture_neon_emission.webp";
 import hexPatternUrl from "@assets/textures/noise/texture_hex_pattern.webp";
 import energyPatternUrl from "@assets/textures/noise/texture_energy_pattern.png";
 
-import heroCoverUrl from "@assets/images/hero/hero_cover.webp";
-import portraitUrl from "@assets/images/brand/portrait_placeholder.webp";
-import aboutWorkingUrl from "@assets/images/about/about_working.webp";
-import aboutCodingUrl from "@assets/images/about/about_coding.webp";
+import heroPortraitFrontUrl from "@assets/images/hero/hero_portrait_front.webp";
+import heroPortraitSideUrl from "@assets/images/hero/hero_portrait_side.webp";
+import heroPortraitHologramUrl from "@assets/images/hero/hero_portrait_hologram.webp";
+import aboutWorkingUrl from "@assets/images/hero/about_working.webp";
+import aboutCodingUrl from "@assets/images/hero/about_coding.webp";
+import aboutTeachingUrl from "@assets/images/hero/about_teaching.webp";
 
 import neonPortfolioCoverUrl from "@assets/images/projects/neon-portfolio/project_neon_portfolio_cover.webp";
 import neonPortfolioArchitectureUrl from "@assets/images/projects/neon-portfolio/project_neon_portfolio_architecture.webp";
@@ -38,10 +40,20 @@ import tunisianFannGalleryUrl from "@assets/images/projects/tunisian-fann/projec
 import ticketingCoverUrl from "@assets/images/projects/ticketing-platform/project_ticketing_platform_cover.webp";
 import ticketingArchitectureUrl from "@assets/images/projects/ticketing-platform/project_ticketing_platform_architecture.webp";
 import medPurchaseCoverUrl from "@assets/images/projects/med-purchase/project_med_purchase_cover.webp";
+import fallahSmartCoverUrl from "@assets/images/projects/project_fallahsamrt/project_fallahsmart_cover.webp";
+import fallahSmartArchitectureUrl from "@assets/images/projects/project_fallahsamrt/project_fallahsmart_architecture.webp";
+import fallahSmartDashboardUrl from "@assets/images/projects/project_fallahsamrt/project_fallahsmart_dashboard.webp";
+import fallahSmartMobileUrl from "@assets/images/projects/project_fallahsamrt/project_fallahsmart_mobile.webp";
+import taskflowCoverUrl from "@assets/images/projects/project_taskflow_AI/project_taskflow_AI_cover.webp";
+import taskflowArchitectureUrl from "@assets/images/projects/project_taskflow_AI/project_taskflow_AI_Architecture.webp";
+import taskflowDashboardUrl from "@assets/images/projects/project_taskflow_AI/project_taskflow_AI_dashboard.webp";
+import taskflowMobileUrl from "@assets/images/projects/project_taskflow_AI/project_taskflow_AI_mobile.webp";
 
 import neonPortfolioVideoUrl from "@assets/videos/projects/neon-portfolio/project_neon_portfolio_preview.mp4?url";
 import tunisianFannVideoUrl from "@assets/videos/projects/tunisian-fann/project_tunisian_fann_preview.mp4?url";
 import ticketingVideoUrl from "@assets/videos/projects/ticketing-platform/project_ticketing_platform_preview.mp4?url";
+import fallahSmartVideoUrl from "@assets/images/projects/project_fallahsamrt/project_fallahsmart_preview.mp4?url";
+import taskflowVideoUrl from "@assets/images/projects/project_taskflow_AI/project_taskflow_AI_preview.mp4?url";
 
 export const MODEL_ASSETS = {
   floatingRing: floatingRingUrl,
@@ -57,10 +69,15 @@ export const MODEL_ASSETS = {
 } as const;
 
 export const IMAGE_ASSETS = {
-  heroCover: heroCoverUrl,
-  portrait: portraitUrl,
+  /** Primary hero / profile portrait. */
+  portrait: heroPortraitFrontUrl,
+  heroCover: heroPortraitHologramUrl,
+  heroPortraitFront: heroPortraitFrontUrl,
+  heroPortraitSide: heroPortraitSideUrl,
+  heroPortraitHologram: heroPortraitHologramUrl,
   aboutWorking: aboutWorkingUrl,
   aboutCoding: aboutCodingUrl,
+  aboutTeaching: aboutTeachingUrl,
   neonPortfolioCover: neonPortfolioCoverUrl,
   neonPortfolioArchitecture: neonPortfolioArchitectureUrl,
   tunisianFannCover: tunisianFannCoverUrl,
@@ -68,12 +85,22 @@ export const IMAGE_ASSETS = {
   ticketingCover: ticketingCoverUrl,
   ticketingArchitecture: ticketingArchitectureUrl,
   medPurchaseCover: medPurchaseCoverUrl,
+  fallahSmartCover: fallahSmartCoverUrl,
+  fallahSmartArchitecture: fallahSmartArchitectureUrl,
+  fallahSmartDashboard: fallahSmartDashboardUrl,
+  fallahSmartMobile: fallahSmartMobileUrl,
+  taskflowCover: taskflowCoverUrl,
+  taskflowArchitecture: taskflowArchitectureUrl,
+  taskflowDashboard: taskflowDashboardUrl,
+  taskflowMobile: taskflowMobileUrl,
 } as const;
 
 export const VIDEO_ASSETS = {
   neonPortfolioPreview: neonPortfolioVideoUrl,
   tunisianFannPreview: tunisianFannVideoUrl,
   ticketingPreview: ticketingVideoUrl,
+  fallahSmartPreview: fallahSmartVideoUrl,
+  taskflowPreview: taskflowVideoUrl,
 } as const;
 
 export const TEXTURE_ASSETS = {

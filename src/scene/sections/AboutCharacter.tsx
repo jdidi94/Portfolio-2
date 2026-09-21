@@ -55,6 +55,7 @@ function beatCopy(beatId: AboutBeatId): {
         title: "Where next",
         subtitle: "Current goals",
         bodyLines: [profile.goals],
+        coverUrl: IMAGE_ASSETS.aboutTeaching,
       };
     default: {
       const _exhaustive: never = beatId;

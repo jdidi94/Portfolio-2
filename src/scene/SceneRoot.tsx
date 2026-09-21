@@ -12,8 +12,18 @@ import { ExperienceRow } from "@scene/sections/ExperienceRow";
 import { TechHive } from "@scene/sections/TechHive";
 import { Elevator } from "@scene/sections/Elevator";
 import { PostProcessing } from "@renderer/PostProcessing";
+import { SceneReadySignal } from "@scene/SceneReadySignal";
+import { SectionDistanceGate } from "@scene/SectionDistanceGate";
+import { CORRIDOR_LAYOUT } from "@config/corridor";
 
+/**
+ * Full experience scene — sections mount together so the visitor never
+ * sees an empty corridor while lazy chunks stream in.
+ * Distance gates skip draw calls for far bands (still mounted).
+ */
 export function SceneRoot(): JSX.Element {
+  const { sectionZ } = CORRIDOR_LAYOUT;
+
   return (
     <>
       <Background />
@@ -23,12 +33,23 @@ export function SceneRoot(): JSX.Element {
       <AmbientParticles />
       <DecorativeObjects />
       <ContentSections />
-      <AboutCharacter />
-      <ProjectCarousel />
-      <ExperienceRow />
-      <TechHive />
-      <Elevator />
+      <SectionDistanceGate centerZ={sectionZ.about}>
+        <AboutCharacter />
+      </SectionDistanceGate>
+      <SectionDistanceGate centerZ={sectionZ.projects}>
+        <ProjectCarousel />
+      </SectionDistanceGate>
+      <SectionDistanceGate centerZ={sectionZ.experience}>
+        <ExperienceRow />
+      </SectionDistanceGate>
+      <SectionDistanceGate centerZ={sectionZ.skills}>
+        <TechHive />
+      </SectionDistanceGate>
+      <SectionDistanceGate centerZ={sectionZ.timeline}>
+        <Elevator />
+      </SectionDistanceGate>
       <PostProcessing />
+      <SceneReadySignal />
     </>
   );
 }

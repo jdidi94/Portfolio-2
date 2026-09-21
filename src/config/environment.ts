@@ -29,7 +29,7 @@ export interface DecorItemConfig {
 export const ENVIRONMENT_CONFIG = {
   fog: {
     color: COLORS.black,
-    /** Lighter fog so deep corridor bands stay visible. */
+    /** Legacy density note — live corridor haze uses FOG_CONFIG linear fog. */
     density: 0.018,
   },
   glow: {

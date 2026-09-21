@@ -3,6 +3,7 @@ import { SECTION_NAV_STOPS, SECTIONS } from "@config/sections";
 import { ABOUT_CHARACTER_CONFIG } from "@config/aboutCharacter";
 import { sortTechnologiesForHiveCluster } from "@config/techHiveVisual";
 import { resolveTechHiveIconUrl } from "@config/techHiveIconMap";
+import { TECH_HIVE_LEGEND_ITEMS } from "@config/techHiveLegend";
 import { projects } from "@data/projects";
 import { experience } from "@data/experience";
 import { technologies } from "@data/technologies";
@@ -11,7 +12,11 @@ import type { Technology } from "@shared-types/content";
 import { ABOUT_WAYPOINT_ID, aboutBeatObjectId } from "@utils/aboutIds";
 import { projectObjectId } from "@utils/projectIds";
 import { experienceObjectId } from "@utils/experienceIds";
-import { techObjectId, HIVE_WAYPOINT_ID } from "@utils/techIds";
+import {
+  techObjectId,
+  techCategoryObjectId,
+  HIVE_WAYPOINT_ID,
+} from "@utils/techIds";
 import { timelineObjectId, ELEVATOR_WAYPOINT_ID } from "@utils/elevatorIds";
 import { EXPERIENCE_WAYPOINT_ID } from "@utils/experienceIds";
 import { PROJECT_CAROUSEL_WAYPOINT_ID } from "@utils/projectIds";
@@ -28,6 +33,13 @@ export interface MobileSectionRailConfig {
   itemCount: number;
 }
 
+export type MobileTechRailItem = {
+  kind: "category";
+  id: string;
+  label: string;
+  techs: Technology[];
+};
+
 export const MOBILE_NAV_CONFIG = {
   /** Wheel / swipe cooldown (ms). */
   stepCooldownMs: 380,
@@ -42,6 +54,16 @@ export const MOBILE_NAV_CONFIG = {
   focusEyeHeight: 0.12,
   /** Absolute camera Z stand-off when resolving mobile card targets. */
   focusDistance: 3.15,
+  /**
+   * First section (Hero) — pull back so the full glass silhouette fits
+   * on-screen without clipped edges on phones.
+   */
+  heroFocusDistance: 4.65,
+  /**
+   * Pull-back for text-heavy section cards (About first beat, Contact).
+   * Slightly farther so faces aren’t clipped on phones.
+   */
+  sectionCardFocusDistance: 4.25,
   /** Neighbor cards stay co-located; tiny Z peek only. */
   stackPeekZ: 0.04,
   /** Card model scale for full-bleed mobile framing. */
@@ -55,10 +77,20 @@ export const MOBILE_NAV_CONFIG = {
   projectCarouselSpacingX: 2.15,
   /** Experience horizontal carousel — world X gap between role centers. */
   experienceCarouselSpacingX: 2.15,
-  /** Tech: one-card pop / unpop carousel. */
-  techCardModelScale: 1.65,
-  /** Closer stand-off for a single logo card filling the frame. */
-  techFocusDistance: 3.25,
+  /** Max logos per category page (label at center, logos on ring). */
+  techPageSize: 3,
+  /** Logo hex scale (matches desktop hive children feel). */
+  techCardModelScale: 1.05,
+  /** Category label card at cluster center. */
+  techCategoryLabelScale: 1.15,
+  /** Center-to-center spacing for label + surrounding logos. */
+  techClusterSpacing: 0.8,
+  /** Rotation of the hex cluster around Z (radians). */
+  techClusterRotationZ: 0,
+  /** Stand-off for the category cluster. */
+  techFocusDistance: 4.3,
+  /** Eye height for mobile tech category framing. */
+  techFocusEyeHeight: 0.6,
   techPopInSeconds: 0.42,
   techPopOutSeconds: 0.28,
   techPopInEase: "back.out(1.6)",
@@ -74,14 +106,56 @@ export const MOBILE_NAV_CONFIG = {
   timelineCardModelScale: 1.72,
 } as const;
 
-function techItemCount(): number {
-  return Math.max(1, orderedTechnologies().length);
-}
-
 function orderedTechnologies(): Technology[] {
   return sortTechnologiesForHiveCluster(
     technologies.filter((tech) => resolveTechHiveIconUrl(tech.id) !== null),
   );
+}
+
+function categoryLabel(categoryId: string): string {
+  return (
+    TECH_HIVE_LEGEND_ITEMS.find((item) => item.id === categoryId)?.label ??
+    categoryId
+  );
+}
+
+/** Tech rail: one pop per category page (label + up to pageSize logos). */
+export function mobileTechRailItems(
+  pageSize: number = MOBILE_NAV_CONFIG.techPageSize,
+): MobileTechRailItem[] {
+  const byCategory = new Map<string, Technology[]>();
+
+  for (const tech of orderedTechnologies()) {
+    const list = byCategory.get(tech.category);
+    if (list) {
+      list.push(tech);
+    } else {
+      byCategory.set(tech.category, [tech]);
+    }
+  }
+
+  const size = Math.max(1, Math.round(pageSize));
+  const items: MobileTechRailItem[] = [];
+
+  for (const [id, techs] of byCategory) {
+    const label = categoryLabel(id);
+    for (let start = 0; start < techs.length; start += size) {
+      const page = techs.slice(start, start + size);
+      const pageIndex = Math.floor(start / size);
+      items.push({
+        kind: "category",
+        id: pageIndex === 0 ? id : `${id}-${pageIndex}`,
+        label,
+        techs: page,
+      });
+    }
+  }
+
+  return items;
+}
+
+function techItemCount(): number {
+  return Math.max(1, mobileTechRailItems(MOBILE_NAV_CONFIG.techPageSize).length);
 }
 
 function timelinePlatforms(): ReturnType<
@@ -191,8 +265,10 @@ export function resolveMobileItemObjectId(
       return role ? experienceObjectId(role.id) : EXPERIENCE_WAYPOINT_ID;
     }
     case "skills": {
-      const tech = orderedTechnologies()[itemIndex];
-      return tech ? techObjectId(tech.id) : HIVE_WAYPOINT_ID;
+      const item = mobileTechRailItems(MOBILE_NAV_CONFIG.techPageSize)[itemIndex];
+      if (!item) return HIVE_WAYPOINT_ID;
+      const mid = item.techs[Math.floor((item.techs.length - 1) / 2)];
+      return mid ? techObjectId(mid.id) : techCategoryObjectId(item.id);
     }
     case "timeline": {
       const platform = timelinePlatforms()[itemIndex];

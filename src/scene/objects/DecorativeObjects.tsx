@@ -5,11 +5,12 @@ import {
   ENVIRONMENT_CONFIG,
   type DecorItemConfig,
 } from "@config/environment";
-import { MODEL_ASSETS } from "@config/assets";
 import { Float } from "@scene/objects/Float";
 import { GlbProp, preloadModel } from "@scene/objects/GlbProp";
 
-Object.values(MODEL_ASSETS).forEach((url) => {
+// Only warm decor GLBs — card / traveler models load with their sections.
+const decorUrls = new Set(Object.values(DECOR_MODEL_URL));
+decorUrls.forEach((url) => {
   preloadModel(url);
 });
 

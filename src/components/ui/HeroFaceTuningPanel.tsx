@@ -140,7 +140,7 @@ export function HeroFaceTuningPanel(): JSX.Element {
       </header>
 
       <p className="mb-3 text-[10px] leading-relaxed text-white/45">
-        Number fields have no max — type any value (e.g. inset 3, scale 4).
+        Number fields have no max. Type any value (e.g. inset 3, scale 4).
         Sliders are only a soft guide.
       </p>
 

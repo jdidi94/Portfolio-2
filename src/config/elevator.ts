@@ -67,7 +67,7 @@ export const ELEVATOR_CONFIG = {
     yearLabel: "Next",
     title: "Your Company?",
     description:
-      "The journey continues — let's build the next interactive experience together.",
+      "The journey continues. Let's build the next interactive experience together.",
     ctaLabel: "Start a conversation",
   },
 } as const;

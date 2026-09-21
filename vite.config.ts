@@ -26,4 +26,40 @@ export default defineConfig({
       "@styles": path.resolve(__dirname, "src/styles"),
     },
   },
+  build: {
+    // Three.js alone is ~900KB minified — expected for a WebGL portfolio.
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        /**
+         * Split heavy libs only. Avoid catch-all vendor buckets —
+         * they create circular chunk graphs with Three / R3F.
+         */
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+
+          if (
+            id.includes(`${path.sep}three${path.sep}`) ||
+            id.includes("/three/")
+          ) {
+            return "vendor-three";
+          }
+          if (id.includes("@react-three")) {
+            return "vendor-r3f";
+          }
+          if (id.includes("gsap")) {
+            return "vendor-gsap";
+          }
+          if (id.includes("framer-motion")) {
+            return "vendor-motion";
+          }
+          if (id.includes("howler")) {
+            return "vendor-audio";
+          }
+
+          return undefined;
+        },
+      },
+    },
+  },
 });

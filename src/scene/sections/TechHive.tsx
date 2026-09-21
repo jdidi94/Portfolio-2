@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type JSX } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState, type JSX } from "react";
 import gsap from "gsap";
 import type { Group } from "three";
 import {
@@ -6,24 +6,44 @@ import {
   visibleTechCountForTier,
 } from "@config/techHiveLayout";
 import { resolveTechHiveIconUrl } from "@config/techHiveIconMap";
-import { sortTechnologiesForHiveCluster } from "@config/techHiveVisual";
+import {
+  resolveTechHiveVisual,
+  sortTechnologiesForHiveCluster,
+} from "@config/techHiveVisual";
 import {
   MOBILE_NAV_CONFIG,
-  mobileOrderedTechnologies,
+  mobileTechRailItems,
+  type MobileTechRailItem,
 } from "@config/mobileNav";
 import { technologies } from "@data/technologies";
-import type { Technology } from "@types";
 import { FloatingCard } from "@components/cards/FloatingCard";
 import { TechHiveChildren } from "@scene/sections/TechHiveChildren";
 import { useExperienceStore } from "@store/experienceStore";
 import { useMobileNavStore } from "@store/mobileNavStore";
 import { useTechHiveLayoutParams } from "@store/techHiveLayoutStore";
 import { useTechHiveStore } from "@store/techHiveStore";
+import { useTechHiveLoadingStore } from "@store/techHiveLoadingStore";
 import { useViewportStore } from "@store/viewportStore";
-import { HIVE_WAYPOINT_ID, techObjectId } from "@utils/techIds";
+import { axialToWorld, hexSpiral } from "@utils/hexGrid";
+import {
+  HIVE_WAYPOINT_ID,
+  techCategoryObjectId,
+  techObjectId,
+} from "@utils/techIds";
 
+/** Suspense fallback — flips the HTML tech loading overlay on/off. */
+function TechHiveLoadingFallback(): null {
+  useEffect(() => {
+    useTechHiveLoadingStore.getState().beginLoading();
+    return () => {
+      useTechHiveLoadingStore.getState().endLoading();
+    };
+  }, []);
+  return null;
+}
 /**
- * Small: one tech logo at a time — unpops out, then pops the next in.
+ * Small: one category page — label at center, logos on surrounding hex cells.
+ * Whole cluster pops / unpops on scroll.
  */
 function TechPopCarousel({
   itemIndex,
@@ -35,23 +55,30 @@ function TechPopCarousel({
   const prefersReducedMotion = useExperienceStore(
     (s) => s.prefersReducedMotion,
   );
+  const cluster = MOBILE_NAV_CONFIG;
   const popRef = useRef<Group>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
-  const visibleIdRef = useRef<string | null>(null);
+  const visibleKeyRef = useRef<string | null>(null);
 
-  const ordered = useMemo(() => mobileOrderedTechnologies(), []);
-  const targetTech = ordered[itemIndex] ?? ordered[0] ?? null;
-  const [visibleTech, setVisibleTech] = useState<Technology | null>(targetTech);
+  const rail = useMemo(
+    () => mobileTechRailItems(cluster.techPageSize),
+    [cluster.techPageSize],
+  );
+  const targetItem = rail[itemIndex] ?? rail[0] ?? null;
+  const [visibleItem, setVisibleItem] = useState<MobileTechRailItem | null>(
+    targetItem,
+  );
 
   useEffect(() => {
     const group = popRef.current;
-    if (!group || !targetTech) return;
+    if (!group || !targetItem) return;
 
+    const targetKey = targetItem.id;
     tweenRef.current?.kill();
 
     if (prefersReducedMotion) {
-      visibleIdRef.current = targetTech.id;
-      setVisibleTech(targetTech);
+      visibleKeyRef.current = targetKey;
+      setVisibleItem(targetItem);
       group.scale.setScalar(1);
       return;
     }
@@ -67,21 +94,19 @@ function TechPopCarousel({
       });
     };
 
-    // First mount — pop in only.
-    if (visibleIdRef.current === null) {
-      visibleIdRef.current = targetTech.id;
-      setVisibleTech(targetTech);
+    if (visibleKeyRef.current === null) {
+      visibleKeyRef.current = targetKey;
+      setVisibleItem(targetItem);
       popIn();
       return () => {
         tweenRef.current?.kill();
       };
     }
 
-    if (visibleIdRef.current === targetTech.id) {
+    if (visibleKeyRef.current === targetKey) {
       return;
     }
 
-    // Unpop current card, swap content, then pop in.
     tweenRef.current = gsap.to(group.scale, {
       x: 0.01,
       y: 0.01,
@@ -89,8 +114,8 @@ function TechPopCarousel({
       duration: MOBILE_NAV_CONFIG.techPopOutSeconds,
       ease: MOBILE_NAV_CONFIG.techPopOutEase,
       onComplete: () => {
-        visibleIdRef.current = targetTech.id;
-        setVisibleTech(targetTech);
+        visibleKeyRef.current = targetKey;
+        setVisibleItem(targetItem);
         popIn();
       },
     });
@@ -98,40 +123,77 @@ function TechPopCarousel({
     return () => {
       tweenRef.current?.kill();
     };
-  }, [targetTech, prefersReducedMotion]);
+  }, [targetItem, prefersReducedMotion]);
 
-  if (!visibleTech) {
+  const cells = useMemo(() => {
+    if (!visibleItem) return [];
+    return hexSpiral(1 + visibleItem.techs.length);
+  }, [visibleItem]);
+
+  if (!visibleItem) {
     return <group />;
   }
 
-  const iconUrl = resolveTechHiveIconUrl(visibleTech.id);
+  const spacing = cluster.techClusterSpacing;
+  const labelCell = cells[0] ?? { q: 0, r: 0 };
+  const labelPos = axialToWorld(labelCell.q, labelCell.r, spacing);
 
   return (
     <group position={[origin[0], origin[1], origin[2]]}>
-      <group ref={popRef} scale={0.01}>
-        <FloatingCard
-          key={visibleTech.id}
-          id={techObjectId(visibleTech.id)}
-          variant="skill"
-          title={visibleTech.name}
-          sectionLabel="Technology"
-          subtitle={visibleTech.category}
-          bodyLines={[visibleTech.description]}
-          coverUrl={iconUrl ?? undefined}
-          position={[0, 0, MOBILE_NAV_CONFIG.stackPeekZ]}
-          phase={0}
-          forceOverview
-          floatAmplitudeOverride={0}
-          modelScaleOverride={MOBILE_NAV_CONFIG.techCardModelScale}
-        />
-      </group>
+      <Suspense fallback={<TechHiveLoadingFallback />}>
+        <group
+          ref={popRef}
+          scale={0.01}
+          rotation={[0, 0, cluster.techClusterRotationZ]}
+        >
+          <FloatingCard
+            key={`label-${visibleItem.id}`}
+            id={techCategoryObjectId(visibleItem.id)}
+            variant="skill"
+            title={visibleItem.label}
+            sectionLabel="Category"
+            position={[
+              labelPos.x,
+              labelPos.y,
+              MOBILE_NAV_CONFIG.stackPeekZ,
+            ]}
+            phase={0}
+            forceOverview
+            floatAmplitudeOverride={0}
+            modelScaleOverride={cluster.techCategoryLabelScale}
+          />
+          {visibleItem.techs.map((tech, index) => {
+            const cell = cells[index + 1] ?? { q: 0, r: 0 };
+            const pos = axialToWorld(cell.q, cell.r, spacing);
+            const iconUrl = resolveTechHiveIconUrl(tech.id);
+            const visual = resolveTechHiveVisual(tech);
+            return (
+              <FloatingCard
+                key={tech.id}
+                id={techObjectId(tech.id)}
+                variant="skill"
+                title={tech.name}
+                sectionLabel={visibleItem.label}
+                coverUrl={iconUrl ?? undefined}
+                logoOnly
+                accentOverride={visual.color}
+                modelKeyOverride={visual.modelKey}
+                position={[pos.x, pos.y, MOBILE_NAV_CONFIG.stackPeekZ]}
+                phase={index * 0.12}
+                floatAmplitudeOverride={0}
+                modelScaleOverride={cluster.techCardModelScale}
+              />
+            );
+          })}
+        </group>
+      </Suspense>
     </group>
   );
 }
 
 /**
  * Technology section — hive on mid/desktop;
- * small: one-card pop / unpop carousel.
+ * small: category cluster pop / unpop (label surrounded by logos).
  */
 export function TechHive(): JSX.Element | null {
   const tier = useViewportStore((s) => s.tier);
@@ -194,14 +256,16 @@ export function TechHive(): JSX.Element | null {
       />
 
       {showChildren ? (
-        <TechHiveChildren
-          filledTechs={filledTechs}
-          slotCount={slotCount}
-          childPositions={layout.childPositions}
-          origin={layout.origin}
-          childModelScale={layoutParams.childModelScale}
-          floatAmplitude={layoutParams.floatAmplitude}
-        />
+        <Suspense fallback={<TechHiveLoadingFallback />}>
+          <TechHiveChildren
+            filledTechs={filledTechs}
+            slotCount={slotCount}
+            childPositions={layout.childPositions}
+            origin={layout.origin}
+            childModelScale={layoutParams.childModelScale}
+            floatAmplitude={layoutParams.floatAmplitude}
+          />
+        </Suspense>
       ) : null}
     </group>
   );

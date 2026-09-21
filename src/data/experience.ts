@@ -15,7 +15,7 @@ export const experience: readonly Experience[] = [
     startDate: "2021-04",
     endDate: "2022-10",
     responsibilities: [
-      "Designed and shipped fullstack client products end to end — UX flows, APIs, and production deploys",
+      "Designed and shipped fullstack client products end to end: UX flows, APIs, and production deploys",
       "Built ecommerce and marketplace features including realtime auctions and direct sales",
       "Owned delivery rhythm with SCRUM, GitHub workflow, and stakeholder backlog prioritization",
       "Integrated payments and role-based auth for multi-actor product surfaces",
@@ -96,7 +96,7 @@ export const experience: readonly Experience[] = [
 
 /** Cover images for experience overview cards (reuse project stills as atmosphere). */
 export const EXPERIENCE_COVER_BY_ID: Record<string, string> = {
-  "freelance-product-apps": IMAGE_ASSETS.tunisianFannCover,
-  "freelance-platform-systems": IMAGE_ASSETS.ticketingCover,
+  "freelance-product-apps": IMAGE_ASSETS.fallahSmartCover,
+  "freelance-platform-systems": IMAGE_ASSETS.taskflowCover,
   "rbk-fullstack-lead": IMAGE_ASSETS.neonPortfolioCover,
 };

@@ -66,7 +66,7 @@ interface GroupProps {
 
 function Group({ title, children }: GroupProps): JSX.Element {
   return (
-    <section className="mb-3 space-y-2 border-b border-white/10 pb-3 last:mb-0 last:border-b-0 last:pb-0">
+    <section className="mb-5 space-y-2 border-b border-white/10 pb-4 last:mb-0 last:border-b-0 last:pb-0">
       <h3 className="text-[10px] tracking-[0.22em] text-cyan-200/70 uppercase">
         {title}
       </h3>

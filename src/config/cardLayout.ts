@@ -17,7 +17,8 @@ export const CARD_LAYOUT = {
     contact: 6.2,
   },
   explore: {
-    cameraPosition: [0, 1.8, 16] as Vector3Tuple,
+    /** Start overview — ~1/3 closer than the original z=16 stand-off. */
+    cameraPosition: [0, 1.8, 10.67] as Vector3Tuple,
     lookAt: [0, laneY("center"), CORRIDOR_LAYOUT.sectionZ.hero] as Vector3Tuple,
   },
   /**

@@ -34,15 +34,15 @@ export interface CardFaceTypeParams {
 }
 
 export const CARD_FACE_TYPE_DEFAULTS: CardFaceTypeParams = {
-  overviewTitleSize: 128,
-  overviewTitleMaxLinesHex: 2,
-  overviewTitleMaxLinesRect: 2,
+  overviewTitleSize: 100,
+  overviewTitleMaxLinesHex: 4,
+  overviewTitleMaxLinesRect: 5,
   overviewTitleLineHeight: 138,
   overviewBodySize: 62,
   overviewBodyLineHeight: 83,
   overviewBodyMaxLinesPerBlock: 2,
   overviewBodyMaxBlocks: 4,
-  overviewSectionSize: 58,
+  overviewSectionSize: 80,
   overviewCtaSize: 57,
   detailTitleSize: 115,
   detailTitleMaxLinesHex: 2,
@@ -56,8 +56,8 @@ export const CARD_FACE_TYPE_DEFAULTS: CardFaceTypeParams = {
   detailBodyMaxLinesPerBlock: 5,
   detailBodyMaxBlocks: 4,
   detailSectionSize: 72,
-  bodyGrowMax: 1.15,
-  bodyGrowMin: 0.9,
+  bodyGrowMax: 0.8,
+  bodyGrowMin: 0.5,
 };
 
 export function formatCardFaceTypeLog(params: CardFaceTypeParams): string {

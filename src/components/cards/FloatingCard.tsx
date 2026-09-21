@@ -1,9 +1,11 @@
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useMemo, useRef, type ReactNode } from "react";
 import type { JSX } from "react";
 import { useFrame } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
 import { CARD_CONFIG, CARD_VARIANT_VISUALS } from "@config/cards";
 import { CARD_LAYOUT } from "@config/cardLayout";
 import {
+  CARD_MODEL_BOUNDS,
   faceShapeForModel,
   hitBoxForModel,
   modelCenterOffset,
@@ -33,6 +35,7 @@ import { useProjectCarouselStore } from "@store/projectCarouselStore";
 import { useElevatorStore } from "@store/elevatorStore";
 import { useExperiencePanelStore } from "@store/experiencePanelStore";
 import { useViewportStore } from "@store/viewportStore";
+import { useContactFaceLinksParams } from "@store/contactFaceLinksStore";
 import { isTechObjectId, techIdFromObjectId } from "@utils/techIds";
 import { isProjectObjectId, projectIdFromObjectId } from "@utils/projectIds";
 import {
@@ -45,6 +48,37 @@ import {
 } from "@utils/elevatorIds";
 import { MathUtils, type Group } from "three";
 
+function ContactFaceOverlayHost({
+  modelKey,
+  overlay,
+}: {
+  modelKey: CardModelKey;
+  overlay: ReactNode;
+}): JSX.Element {
+  const params = useContactFaceLinksParams();
+  const bounds = CARD_MODEL_BOUNDS[modelKey];
+
+  return (
+    <Html
+      transform
+      sprite={false}
+      pointerEvents="auto"
+      position={[
+        params.offsetX,
+        params.offsetY,
+        bounds.frontZ + params.offsetZ,
+      ]}
+      distanceFactor={params.distanceFactor}
+      style={{
+        transform: "translate(-50%, -50%)",
+        pointerEvents: "auto",
+      }}
+      zIndexRange={[20, 0]}
+    >
+      {overlay}
+    </Html>
+  );
+}
 export interface FloatingCardProps {
   id: string;
   variant: ContentCardVariant;
@@ -84,6 +118,11 @@ export interface FloatingCardProps {
   hideLogo?: boolean;
   /** Soften emissive for non-hovered siblings in the project carousel. */
   dimmed?: boolean;
+  /**
+   * HTML overlay locked to the glass face (e.g. contact link icons).
+   * Transformed with the card so it stays inside the silhouette.
+   */
+  faceOverlay?: ReactNode;
 }
 
 function hoverDampLambda(): number {
@@ -120,6 +159,7 @@ export function FloatingCard({
   rotationYOverride,
   hideLogo = false,
   dimmed = false,
+  faceOverlay,
 }: FloatingCardProps): JSX.Element {
   const hoveredObjectId = useExperienceStore((s) => s.hoveredObjectId);
   const focusObjectId = useExperienceStore((s) => s.focusObjectId);
@@ -233,7 +273,7 @@ export function FloatingCard({
   });
 
   const ariaLabel = useMemo(
-    () => (subtitle ? `${title} — ${subtitle}` : title),
+    () => (subtitle ? `${title}, ${subtitle}` : title),
     [title, subtitle],
   );
 
@@ -320,6 +360,12 @@ export function FloatingCard({
                         : undefined
                     }
                     inModelSpace
+                  />
+                ) : null}
+                {faceOverlay ? (
+                  <ContactFaceOverlayHost
+                    modelKey={resolvedModelKey}
+                    overlay={faceOverlay}
                   />
                 ) : null}
               </group>

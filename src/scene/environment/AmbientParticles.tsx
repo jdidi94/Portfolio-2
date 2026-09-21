@@ -6,8 +6,11 @@ import {
   PARTICLES_CONFIG,
   type ParticleLayerConfig,
 } from "@config/particles";
+import { resolveParticleScale } from "@config/performance";
 import { TEXTURE_ASSETS } from "@config/assets";
 import { useExperienceStore } from "@store/experienceStore";
+import { usePerformanceStore } from "@store/performanceStore";
+import { useViewportStore } from "@store/viewportStore";
 import type { Points, Texture } from "three";
 import {
   AdditiveBlending,
@@ -92,6 +95,9 @@ function ParticleField(): JSX.Element {
   const prefersReducedMotion = useExperienceStore(
     (s) => s.prefersReducedMotion,
   );
+  const quality = usePerformanceStore((s) => s.quality);
+  const tier = useViewportStore((s) => s.tier);
+  const particleScale = resolveParticleScale(quality, tier);
   const layerConfigs = PARTICLES_CONFIG.layers;
   const urls = layerConfigs.map(
     (layer) => TEXTURE_ASSETS[layer.textureKey],
@@ -107,7 +113,7 @@ function ParticleField(): JSX.Element {
       {layerConfigs.map((config, index) => {
         const count = prefersReducedMotion
           ? config.reducedMotionCount
-          : config.count;
+          : Math.max(8, Math.round(config.count * particleScale));
         return (
           <ParticleLayer
             key={config.textureKey}

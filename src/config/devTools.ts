@@ -11,6 +11,8 @@ export const DEV_TOOLS_CONFIG = {
   cardEdgeFogTuningPanel: false,
   /** Shared card-face typography (all sections). */
   cardFaceTypeTuningPanel: false,
-  /** Technology Hive parent/child spacing + camera knobs. */
+  /** Technology Hive parent/child spacing + camera knobs (desktop). */
   techHiveLayoutTuningPanel: false,
+  /** Contact card face-link Html placement. */
+  contactFaceLinksTuningPanel: false,
 } as const;

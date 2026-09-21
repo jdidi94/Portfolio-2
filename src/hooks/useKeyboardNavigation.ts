@@ -11,6 +11,7 @@ import { useMobileNavStore } from "@store/mobileNavStore";
 import { useMobileMenuStore } from "@store/mobileMenuStore";
 import { useViewportStore } from "@store/viewportStore";
 import { projects } from "@data/projects";
+import { nudgeIfPanelOpen } from "@utils/panelGate";
 import {
   ELEVATOR_WAYPOINT_ID,
   ELEVATOR_DETAIL_WAYPOINT_ID,
@@ -66,7 +67,12 @@ export function useKeyboardNavigation(): void {
           case "ArrowDown":
           case "n":
           case "N":
-            if (!panelOpen && !mobileMenu.isOpen) {
+            if (panelOpen) {
+              event.preventDefault();
+              nudgeIfPanelOpen();
+              break;
+            }
+            if (!mobileMenu.isOpen) {
               event.preventDefault();
               mobileNav.stepItem(1);
             }
@@ -75,7 +81,12 @@ export function useKeyboardNavigation(): void {
           case "ArrowUp":
           case "p":
           case "P":
-            if (!panelOpen && !mobileMenu.isOpen) {
+            if (panelOpen) {
+              event.preventDefault();
+              nudgeIfPanelOpen();
+              break;
+            }
+            if (!mobileMenu.isOpen) {
               event.preventDefault();
               mobileNav.stepItem(-1);
             }

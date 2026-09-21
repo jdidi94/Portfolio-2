@@ -4,6 +4,7 @@ import { ACESFilmicToneMapping } from "three";
 import { RENDERER_CONFIG } from "@config/renderer";
 import { COLORS } from "@config/colors";
 import { SceneRoot } from "@scene/SceneRoot";
+import { AdaptiveQuality } from "@renderer/AdaptiveQuality";
 import { NavigationManager } from "@experience/NavigationManager";
 import { useViewportStore } from "@store/viewportStore";
 
@@ -14,12 +15,17 @@ function handlePointerMissed(): void {
 
 export function ExperienceCanvas(): JSX.Element {
   const dprMax = useViewportStore((s) => s.dprMax);
+  const tier = useViewportStore((s) => s.tier);
+  // Antialias is a GL context flag — bind only to tier so quality
+  // changes do not remount the Canvas.
+  const antialias = RENDERER_CONFIG.antialias && tier !== "small";
 
   return (
     <Canvas
       dpr={[RENDERER_CONFIG.dprMin, dprMax]}
+      performance={{ min: 0.5, max: 1, debounce: 200 }}
       gl={{
-        antialias: RENDERER_CONFIG.antialias,
+        antialias,
         alpha: false,
         powerPreference: "high-performance",
         toneMapping: ACESFilmicToneMapping,
@@ -28,6 +34,7 @@ export function ExperienceCanvas(): JSX.Element {
       style={{ background: COLORS.black }}
       onPointerMissed={handlePointerMissed}
     >
+      <AdaptiveQuality />
       <SceneRoot />
     </Canvas>
   );

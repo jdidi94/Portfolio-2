@@ -8,8 +8,8 @@ import { profile } from "@data/profile";
 import { projects } from "@data/projects";
 import { skills } from "@data/skills";
 import { experience } from "@data/experience";
-import { socialLinks } from "@data/social";
 import { FloatingCard } from "@components/cards/FloatingCard";
+import { ContactCardFaceLinks } from "@components/cards/ContactCardFaceLinks";
 import { useHeroTuningParams } from "@store/heroFaceTuningStore";
 import { useViewportStore } from "@store/viewportStore";
 
@@ -75,11 +75,7 @@ function resolveCardCopy(placement: (typeof CONTENT_CARD_PLACEMENTS)[number]): {
       return {
         title: "Contact",
         subtitle: profile.availability,
-        bodyLines: [
-          profile.location,
-          profile.email,
-          socialLinks.map((link) => link.label).join(" · "),
-        ],
+        bodyLines: [profile.location, profile.email],
         patternKey: CARD_CONFIG.facePattern.contact,
       };
     default:
@@ -114,6 +110,11 @@ export function ContentSections(): JSX.Element {
             phase={index * 0.85}
             heroTuning={
               placement.variant === "hero" ? heroTuning : undefined
+            }
+            faceOverlay={
+              placement.objectId === "contact" ? (
+                <ContactCardFaceLinks />
+              ) : undefined
             }
           />
         );

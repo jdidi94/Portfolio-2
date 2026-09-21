@@ -39,7 +39,7 @@ export function drawCardVariantIcon(
       drawTimelineIcon(ctx, cx, cy, size);
       break;
     case "certificate":
-      drawSkillIcon(ctx, cx, cy, size);
+      drawCertificateIcon(ctx, cx, cy, size);
       break;
     default:
       drawHeroIcon(ctx, cx, cy, size);
@@ -122,6 +122,56 @@ function drawSkillIcon(
   ctx.globalAlpha = 0.85;
   ctx.fill();
   ctx.globalAlpha = 1;
+}
+
+/** Diploma / scroll — distinct from the Technologies hex+bolt. */
+function drawCertificateIcon(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number,
+): void {
+  const w = size * 0.62;
+  const h = size * 0.72;
+  const x = cx - w / 2;
+  const y = cy - h / 2;
+  const r = size * 0.05;
+
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Ribbon seal at bottom.
+  const sealR = size * 0.1;
+  const sealY = y + h * 0.72;
+  ctx.beginPath();
+  ctx.arc(cx, sealY, sealR, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx - sealR * 0.35, sealY + sealR * 0.85);
+  ctx.lineTo(cx - sealR * 0.55, sealY + sealR * 2.1);
+  ctx.lineTo(cx, sealY + sealR * 1.45);
+  ctx.lineTo(cx + sealR * 0.55, sealY + sealR * 2.1);
+  ctx.lineTo(cx + sealR * 0.35, sealY + sealR * 0.85);
+  ctx.stroke();
+
+  // Title lines on the diploma face.
+  const lineW = w * 0.55;
+  for (const t of [0.28, 0.4, 0.52]) {
+    ctx.beginPath();
+    ctx.moveTo(cx - lineW / 2, y + h * t);
+    ctx.lineTo(cx + lineW / 2, y + h * t);
+    ctx.stroke();
+  }
 }
 
 function drawContactIcon(

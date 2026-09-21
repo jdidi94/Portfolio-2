@@ -88,6 +88,7 @@ export const ABOUT_CHARACTER_CONFIG = {
       id: "goals",
       label: "Goals",
       position: [2.35, 0.15, 0.55],
+      coverKey: "aboutTeaching",
     },
   ] as const satisfies readonly AboutBeatConfig[],
 } as const;
