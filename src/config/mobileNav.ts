@@ -158,7 +158,7 @@ export function mobileStepDeltaForSwipe(
   return swipeUp ? 1 : -1;
 }
 
-/** Wheel / trackpad: positive deltaY (finger up / content down) → step. */
+/** Wheel / trackpad: positive deltaY → step forward (unless timeline invert). */
 export function mobileStepDeltaForWheel(
   sectionId: string,
   primaryDelta: number,
@@ -171,30 +171,6 @@ export function mobileStepDeltaForWheel(
     return -forward;
   }
   return forward;
-}
-
-/**
- * Arrow button: `upOrLeft` means the ↑ / ← control.
- * Matches the swipe that control represents after timeline invert.
- */
-export function mobileStepDeltaForArrow(
-  sectionId: string,
-  axis: MobileItemAxis,
-  upOrLeft: boolean,
-): number {
-  if (axis === "x") {
-    // ← = swipe left = next.
-    return upOrLeft ? 1 : -1;
-  }
-  if (
-    sectionId === "timeline" &&
-    MOBILE_NAV_CONFIG.timelineInvertScroll
-  ) {
-    // ↑ = swipe up = previous when inverted.
-    return upOrLeft ? -1 : 1;
-  }
-  // ↑ = swipe up = next.
-  return upOrLeft ? 1 : -1;
 }
 
 function orderedTechnologies(): Technology[] {
