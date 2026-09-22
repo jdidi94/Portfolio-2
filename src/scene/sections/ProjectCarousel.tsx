@@ -19,6 +19,7 @@ import { useProjectCarouselStore } from "@store/projectCarouselStore";
 import { useProjectTuningParams } from "@store/projectFaceTuningStore";
 import { useViewportStore } from "@store/viewportStore";
 import { projectObjectId } from "@utils/projectIds";
+import { projectFaceImage } from "@utils/projectMedia";
 
 function ProjectMobileCarousel(): JSX.Element {
   const itemIndex = useMobileNavStore((s) => s.itemIndex);
@@ -77,7 +78,7 @@ function ProjectMobileCarousel(): JSX.Element {
                     : "Completed",
                 `${project.role} · ${project.duration}`,
               ]}
-              coverUrl={project.images[0]}
+              coverUrl={projectFaceImage(project)}
               patternKey={CARD_CONFIG.facePattern.project}
               position={[index * spacingX, 0, MOBILE_NAV_CONFIG.stackPeekZ]}
               phase={index * 0.75}
@@ -300,7 +301,7 @@ export function ProjectCarousel(): JSX.Element | null {
                       : "Completed",
                   `${project.role} · ${project.duration}`,
                 ]}
-                coverUrl={project.images[0]}
+                coverUrl={projectFaceImage(project)}
                 patternKey={CARD_CONFIG.facePattern.project}
                 position={[0, 0, 0]}
                 phase={slot.phase}

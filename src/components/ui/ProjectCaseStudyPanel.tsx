@@ -4,6 +4,7 @@ import { projects } from "@data/projects";
 import { PROJECT_CAROUSEL_CONFIG } from "@config/projectCarousel";
 import { useProjectCarouselStore } from "@store/projectCarouselStore";
 import { usePanelNudgeFeedback } from "@hooks/usePanelNudgeFeedback";
+import { projectCoverImage } from "@utils/projectMedia";
 
 function statusLabel(status: (typeof projects)[number]["status"]): string {
   if (status === "in-progress") return "In progress";
@@ -21,6 +22,7 @@ export function ProjectCaseStudyPanel(): JSX.Element {
   const { shellControls, closeHintClass } = usePanelNudgeFeedback("cyan");
   const project =
     projects.find((item) => item.id === selectedProjectId) ?? null;
+  const coverImage = project ? projectCoverImage(project) : undefined;
 
   return (
     <AnimatePresence>
@@ -43,17 +45,19 @@ export function ProjectCaseStudyPanel(): JSX.Element {
             animate={shellControls}
             className="flex min-h-0 flex-1 flex-col overflow-hidden"
           >
-            <div className="relative shrink-0">
-              {project.images[0] ? (
-                <img
-                  src={project.images[0]}
-                  alt=""
-                  className="h-36 w-full object-cover"
-                />
+            <div className="relative shrink-0 bg-black/50">
+              {coverImage ? (
+                <div className="flex h-44 w-full items-center justify-center px-3 pt-3 pb-16">
+                  <img
+                    src={coverImage}
+                    alt=""
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
               ) : (
                 <div className="h-24 w-full bg-gradient-to-br from-cyan-500/20 to-blue-900/40" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent" />
               <div className="absolute right-3 bottom-3 left-3 flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-[10px] tracking-[0.28em] text-cyan-200/80 uppercase">
