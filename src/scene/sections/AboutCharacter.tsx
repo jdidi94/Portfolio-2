@@ -206,7 +206,6 @@ export function AboutCharacter(): JSX.Element {
                 accentOverride={COLORS.purple}
                 modelScaleOverride={MOBILE_NAV_CONFIG.cardModelScale}
                 floatAmplitudeOverride={0}
-                forceOverview
                 dimmed={!focused}
               />
             );

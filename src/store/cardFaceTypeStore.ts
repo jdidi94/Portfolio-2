@@ -36,6 +36,8 @@ function pickParams(state: CardFaceTypeStore): CardFaceTypeParams {
     detailSubtitleSize: state.detailSubtitleSize,
     detailSubtitleMaxLines: state.detailSubtitleMaxLines,
     detailSubtitleLineHeight: state.detailSubtitleLineHeight,
+    detailTitleToSubtitleGap: state.detailTitleToSubtitleGap,
+    detailSubtitleToBodyGap: state.detailSubtitleToBodyGap,
     detailBodySize: state.detailBodySize,
     detailBodyLineHeight: state.detailBodyLineHeight,
     detailBodyMaxLinesPerBlock: state.detailBodyMaxLinesPerBlock,

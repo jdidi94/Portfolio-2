@@ -194,7 +194,15 @@ export function FloatingCard({
     isProjectSelected ||
     isExperienceSelected ||
     isTimelineSelected;
-  const showDetailFace = isCameraFocused && !logoOnly && !forceOverview;
+  // Projects / experience / timeline select via store (camera focuses the
+  // section waypoint, not the card). Mirror About: selected cards use detail
+  // typography so title / subtitle never stack on the overview path.
+  const showDetailFace =
+    !logoOnly &&
+    (isProjectSelected ||
+      isExperienceSelected ||
+      isTimelineSelected ||
+      (isCameraFocused && !forceOverview));
 
   const visual = CARD_VARIANT_VISUALS[variant];
   // Category color tints the GLB frame only — face texture stays variant-neutral

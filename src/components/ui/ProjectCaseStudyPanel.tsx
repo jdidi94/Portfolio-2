@@ -54,8 +54,8 @@ export function ProjectCaseStudyPanel(): JSX.Element {
                 <div className="h-24 w-full bg-gradient-to-br from-cyan-500/20 to-blue-900/40" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-              <div className="absolute right-3 bottom-3 left-3">
-                <div className="mb-1 flex flex-wrap items-center gap-2">
+              <div className="absolute right-3 bottom-3 left-3 flex flex-col gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <p className="text-[10px] tracking-[0.28em] text-cyan-200/80 uppercase">
                     {project.category}
                   </p>
@@ -73,10 +73,12 @@ export function ProjectCaseStudyPanel(): JSX.Element {
                     </span>
                   ) : null}
                 </div>
-                <h2 className="font-[family-name:var(--font-display)] text-xl tracking-wide text-white">
+                <h2 className="font-[family-name:var(--font-display)] text-xl leading-[1.15] tracking-wide text-white">
                   {project.title}
                 </h2>
-                <p className="text-sm text-white/65">{project.subtitle}</p>
+                <p className="text-sm leading-normal text-white/65">
+                  {project.subtitle}
+                </p>
               </div>
             </div>
 

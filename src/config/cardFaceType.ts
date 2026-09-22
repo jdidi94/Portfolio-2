@@ -22,6 +22,10 @@ export interface CardFaceTypeParams {
   detailSubtitleSize: number;
   detailSubtitleMaxLines: number;
   detailSubtitleLineHeight: number;
+  /** Extra space between title block and subtitle (design units @ 2048). */
+  detailTitleToSubtitleGap: number;
+  /** Extra space between subtitle block and body (design units @ 2048). */
+  detailSubtitleToBodyGap: number;
   detailBodySize: number;
   detailBodyLineHeight: number;
   detailBodyMaxLinesPerBlock: number;
@@ -44,20 +48,23 @@ export const CARD_FACE_TYPE_DEFAULTS: CardFaceTypeParams = {
   overviewBodyMaxBlocks: 4,
   overviewSectionSize: 80,
   overviewCtaSize: 57,
-  detailTitleSize: 115,
-  detailTitleMaxLinesHex: 2,
+  /** Matches About detail rhythm — clear title / subtitle separation. */
+  detailTitleSize: 100,
+  detailTitleMaxLinesHex: 3,
   detailTitleMaxLinesRect: 3,
-  detailTitleLineHeight: 128,
-  detailSubtitleSize: 71,
+  detailTitleLineHeight: 132,
+  detailSubtitleSize: 64,
   detailSubtitleMaxLines: 3,
-  detailSubtitleLineHeight: 94,
-  detailBodySize: 80,
-  detailBodyLineHeight: 89,
-  detailBodyMaxLinesPerBlock: 5,
+  detailSubtitleLineHeight: 88,
+  detailTitleToSubtitleGap: 72,
+  detailSubtitleToBodyGap: 56,
+  detailBodySize: 72,
+  detailBodyLineHeight: 96,
+  detailBodyMaxLinesPerBlock: 6,
   detailBodyMaxBlocks: 4,
-  detailSectionSize: 72,
-  bodyGrowMax: 0.8,
-  bodyGrowMin: 0.5,
+  detailSectionSize: 56,
+  bodyGrowMax: 0.85,
+  bodyGrowMin: 0.55,
 };
 
 export function formatCardFaceTypeLog(params: CardFaceTypeParams): string {

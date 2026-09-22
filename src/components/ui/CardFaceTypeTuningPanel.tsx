@@ -288,6 +288,22 @@ export function CardFaceTypeTuningPanel(): JSX.Element {
           onChange={set("detailSubtitleLineHeight")}
         />
         <NumberRow
+          label="Title → subtitle gap"
+          value={params.detailTitleToSubtitleGap}
+          step={1}
+          softMin={8}
+          softMax={80}
+          onChange={set("detailTitleToSubtitleGap")}
+        />
+        <NumberRow
+          label="Subtitle → body gap"
+          value={params.detailSubtitleToBodyGap}
+          step={1}
+          softMin={8}
+          softMax={80}
+          onChange={set("detailSubtitleToBodyGap")}
+        />
+        <NumberRow
           label="Subtitle max lines"
           value={params.detailSubtitleMaxLines}
           step={1}

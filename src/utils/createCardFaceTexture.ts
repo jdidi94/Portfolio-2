@@ -565,6 +565,25 @@ function fillSharpText(
   ctx.fillText(text, x, y);
 }
 
+/**
+ * Advance from one alphabetic baseline to the next so descenders / ascenders
+ * never collide (same rhythm About detail faces use).
+ */
+function nextBaseline(
+  lastBaseline: number,
+  currentSize: number,
+  nextSize: number,
+  extraGap: number,
+): number {
+  // Descender pad + explicit gap + ascender pad — keeps Syne from colliding.
+  return (
+    lastBaseline +
+    Math.round(currentSize * 0.38) +
+    extraGap +
+    Math.round(nextSize * 0.9)
+  );
+}
+
 function paintOverview(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -657,7 +676,7 @@ function paintOverview(
       options.variant === "experience" ||
       options.variant === "hero");
 
-  // Photo cards: title + section over the still; skip the large variant icon.
+  // Photo cards: bottom stack — section → title → subtitle (About gaps).
   if (hasPhotoCover) {
     const titleSize = Math.round(type.overviewTitleSize * unit);
     const titleLineHeight = Math.round(type.overviewTitleLineHeight * unit);
@@ -666,44 +685,113 @@ function paintOverview(
       : type.overviewTitleMaxLinesRect;
     const sectionLabel = (options.sectionLabel ?? "Section").toUpperCase();
     const sectionSize = Math.round(type.overviewSectionSize * unit);
+    const sectionToTitleGap = Math.round(56 * unit);
+    const titleToSubGap = Math.round(
+      Math.max(type.detailTitleToSubtitleGap, 64) * unit,
+    );
+    const subSize = Math.round(type.detailSubtitleSize * unit);
+    const subLineHeight = Math.round(type.detailSubtitleLineHeight * unit);
+    const hasSubtitle = Boolean(options.subtitle);
 
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
 
-    const bottomY = height - padBottom - Math.round(24 * unit);
     ctx.font = `700 ${titleSize}px ${fontStack}`;
-    const titleH = measureWrappedHeight(
+    const titleLines = breakWrappedLines(
       ctx,
       options.title,
       maxTextWidth,
-      titleLineHeight,
       titleMaxLines,
     );
-    const sectionH = sectionSize;
-    const stackH = sectionH + Math.round(28 * unit) + titleH;
-    let cursorY = bottomY - stackH;
+    const titleH =
+      titleLines.length > 0 ? titleLines.length * titleLineHeight : 0;
+
+    let subtitleLines: string[] = [];
+    let subtitleH = 0;
+    if (hasSubtitle && options.subtitle) {
+      ctx.font = `500 ${subSize}px ${fontStack}`;
+      subtitleLines = breakWrappedLines(
+        ctx,
+        options.subtitle,
+        maxTextWidth,
+        type.detailSubtitleMaxLines,
+      );
+      subtitleH =
+        subtitleLines.length > 0
+          ? subtitleLines.length * subLineHeight
+          : 0;
+    }
+
+    const sectionToTitleAdvance =
+      Math.round(sectionSize * 0.35) +
+      sectionToTitleGap +
+      Math.round(titleSize * 0.85);
+    const titleToSubAdvance =
+      subtitleH > 0
+        ? Math.round(titleSize * 0.35) +
+          titleToSubGap +
+          Math.round(subSize * 0.85)
+        : 0;
+    const stackH =
+      sectionSize +
+      sectionToTitleAdvance +
+      titleH +
+      (subtitleH > 0 ? titleToSubAdvance + subtitleH : 0) +
+      Math.round(subSize * 0.35);
+
+    const bottomY = height - padBottom - Math.round(32 * unit);
+    const cursorY = bottomY - stackH;
 
     ctx.font = `600 ${sectionSize}px ${fontStack}`;
-    fillSharpText(ctx, sectionLabel, cx, cursorY + sectionH, options.accent);
-    cursorY += sectionH + Math.round(28 * unit);
+    const sectionBaseline = cursorY + Math.round(sectionSize * 0.85);
+    fillSharpText(ctx, sectionLabel, cx, sectionBaseline, options.accent);
 
+    if (titleLines.length === 0) {
+      return;
+    }
+
+    const titleFirstBaseline = nextBaseline(
+      sectionBaseline,
+      sectionSize,
+      titleSize,
+      sectionToTitleGap,
+    );
     ctx.font = `700 ${titleSize}px ${fontStack}`;
     ctx.fillStyle = "#E8EEF6";
-    wrapText(
+    const lastTitleBaseline = wrapText(
       ctx,
       options.title,
       cx,
-      cursorY,
+      titleFirstBaseline,
       maxTextWidth,
       titleLineHeight,
       titleMaxLines,
     );
+
+    if (subtitleLines.length > 0 && options.subtitle) {
+      const subFirstBaseline = nextBaseline(
+        lastTitleBaseline,
+        titleSize,
+        subSize,
+        titleToSubGap,
+      );
+      ctx.font = `500 ${subSize}px ${fontStack}`;
+      ctx.fillStyle = "rgba(220, 228, 240, 0.92)";
+      wrapText(
+        ctx,
+        options.subtitle,
+        cx,
+        subFirstBaseline,
+        maxTextWidth,
+        subLineHeight,
+        type.detailSubtitleMaxLines,
+      );
+    }
     return;
   }
 
   const iconSize = Math.round(height * (pointed ? 0.28 : 0.3));
   const afterIconGap = Math.round(iconSize * 0.72);
-  const sectionGap = Math.round(iconSize * 0.45);
   const titleSize = Math.round(type.overviewTitleSize * unit);
   const titleLineHeight = Math.round(type.overviewTitleLineHeight * unit);
   const titleMaxLines = pointed
@@ -711,11 +799,11 @@ function paintOverview(
     : type.overviewTitleMaxLinesRect;
   const sectionLabel = (options.sectionLabel ?? "Section").toUpperCase();
   const sectionSize = Math.round(type.overviewSectionSize * unit);
+  const sectionToTitleGap = Math.round(48 * unit);
 
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
 
-  // Overview stack: icon + section label + title only.
   const sectionH = sectionSize;
   ctx.font = `700 ${titleSize}px ${fontStack}`;
   const titleH = measureWrappedHeight(
@@ -726,8 +814,12 @@ function paintOverview(
     titleMaxLines,
   );
 
+  const sectionToTitleAdvance =
+    Math.round(sectionSize * 0.35) +
+    sectionToTitleGap +
+    Math.round(titleSize * 0.85);
   const totalH =
-    iconSize + afterIconGap + sectionH + sectionGap * 0.35 + titleH;
+    iconSize + afterIconGap + sectionH + sectionToTitleAdvance + titleH;
   let cursorY = padTop + (availableH - totalH) / 2;
 
   const iconCenterY = cursorY + iconSize / 2;
@@ -742,16 +834,22 @@ function paintOverview(
   cursorY += iconSize + afterIconGap;
 
   ctx.font = `600 ${sectionSize}px ${fontStack}`;
-  fillSharpText(ctx, sectionLabel, cx, cursorY, options.accent);
-  cursorY += sectionH + sectionGap * 0.35;
+  const sectionBaseline = cursorY + Math.round(sectionSize * 0.85);
+  fillSharpText(ctx, sectionLabel, cx, sectionBaseline, options.accent);
 
+  const titleFirstBaseline = nextBaseline(
+    sectionBaseline,
+    sectionSize,
+    titleSize,
+    sectionToTitleGap,
+  );
   ctx.font = `700 ${titleSize}px ${fontStack}`;
   ctx.fillStyle = "#E8EEF6";
   wrapText(
     ctx,
     options.title,
     cx,
-    cursorY,
+    titleFirstBaseline,
     maxTextWidth,
     titleLineHeight,
     titleMaxLines,
@@ -779,9 +877,7 @@ function paintDetail(
 
   const sectionLabel = (options.sectionLabel ?? "").toUpperCase();
   const sectionSize = Math.round(type.detailSectionSize * unit);
-  const sectionBlock = sectionLabel
-    ? sectionSize + Math.round(48 * unit)
-    : 0;
+  const sectionGap = Math.round(40 * unit);
 
   const titleSize = Math.round(type.detailTitleSize * unit);
   const titleLineHeight = Math.round(type.detailTitleLineHeight * unit);
@@ -789,39 +885,54 @@ function paintDetail(
     ? type.detailTitleMaxLinesHex
     : type.detailTitleMaxLinesRect;
   ctx.font = `700 ${titleSize}px ${fontStack}`;
-  const titleH = measureWrappedHeight(
+  const titleLines = breakWrappedLines(
     ctx,
     options.title,
     maxTextWidth,
-    titleLineHeight,
     titleMaxLines,
   );
+  const titleH =
+    titleLines.length > 0 ? titleLines.length * titleLineHeight : 0;
 
   const subSize = Math.round(type.detailSubtitleSize * unit);
   const subLineHeight = Math.round(type.detailSubtitleLineHeight * unit);
+  const titleToSubGap = Math.round(type.detailTitleToSubtitleGap * unit);
+  const subToBodyGap = Math.round(type.detailSubtitleToBodyGap * unit);
   let subtitleH = 0;
+  let subtitleLines: string[] = [];
   if (options.subtitle) {
     ctx.font = `500 ${subSize}px ${fontStack}`;
-    subtitleH = measureWrappedHeight(
+    subtitleLines = breakWrappedLines(
       ctx,
       options.subtitle,
       maxTextWidth,
-      subLineHeight,
       type.detailSubtitleMaxLines,
     );
+    subtitleH =
+      subtitleLines.length > 0
+        ? subtitleLines.length * subLineHeight
+        : 0;
   }
 
-  const gapAfterTitle = Math.round(titleLineHeight * 0.55);
-  const gapAfterSub = options.subtitle
-    ? Math.round(subLineHeight * 0.7)
-    : Math.round(24 * unit);
-  const gapBeforeBody = Math.round(16 * unit);
+  const sectionBlock = sectionLabel ? sectionSize + sectionGap : 0;
+  const titleToSubAdvance =
+    titleH > 0 && subtitleH > 0
+      ? Math.round(titleSize * 0.38) + titleToSubGap + Math.round(subSize * 0.9)
+      : titleH > 0
+        ? Math.round(titleSize * 0.38) + titleToSubGap
+        : 0;
+  const subToBodyAdvance =
+    subtitleH > 0
+      ? Math.round(subSize * 0.38) + subToBodyGap
+      : titleH > 0
+        ? Math.round(titleSize * 0.38) + subToBodyGap
+        : subToBodyGap;
 
   const fixedH =
     sectionBlock +
     titleH +
-    gapAfterTitle +
-    (subtitleH > 0 ? subtitleH + gapAfterSub : gapAfterSub);
+    (subtitleH > 0 ? titleToSubAdvance + subtitleH : 0) +
+    subToBodyAdvance;
 
   const bodySizeBase = Math.round(type.detailBodySize * unit);
   const bodyLineBase = Math.round(type.detailBodyLineHeight * unit);
@@ -842,8 +953,7 @@ function paintDetail(
     );
     if (blockH > 0) {
       bodyBaseH +=
-        (bodyBaseH > 0 ? Math.round(bodyLineBase * 0.85) : gapBeforeBody) +
-        blockH;
+        (bodyBaseH > 0 ? Math.round(bodyLineBase * 0.55) : 0) + blockH;
     }
   }
 
@@ -863,7 +973,7 @@ function paintDetail(
   const bodyH = bodyBaseH * bodyGrow;
   const totalH = fixedH + bodyH;
 
-  let cursorY = padTop + (availableH - totalH) / 2;
+  let cursorY = padTop + Math.max(0, (availableH - totalH) / 2);
 
   if (sectionLabel) {
     ctx.font = `600 ${sectionSize}px ${fontStack}`;
@@ -871,51 +981,71 @@ function paintDetail(
     cursorY += sectionBlock;
   }
 
-  ctx.font = `700 ${titleSize}px ${fontStack}`;
-  ctx.fillStyle = "#E8EEF6";
-  cursorY =
-    wrapText(
+  let lastBaseline = cursorY;
+  if (titleLines.length > 0) {
+    const titleFirstBaseline = cursorY + Math.round(titleSize * 0.9);
+    ctx.font = `700 ${titleSize}px ${fontStack}`;
+    ctx.fillStyle = "#E8EEF6";
+    lastBaseline = wrapText(
       ctx,
       options.title,
       cx,
-      cursorY + titleLineHeight * 0.85,
+      titleFirstBaseline,
       maxTextWidth,
       titleLineHeight,
       titleMaxLines,
-    ) + gapAfterTitle;
+    );
+    cursorY = lastBaseline;
+  }
 
-  if (options.subtitle) {
+  if (options.subtitle && subtitleLines.length > 0) {
+    const subFirstBaseline = nextBaseline(
+      lastBaseline,
+      titleSize,
+      subSize,
+      titleToSubGap,
+    );
     ctx.font = `500 ${subSize}px ${fontStack}`;
     ctx.fillStyle = "rgba(220, 228, 240, 0.92)";
-    cursorY =
-      wrapText(
-        ctx,
-        options.subtitle,
-        cx,
-        cursorY,
-        maxTextWidth,
-        subLineHeight,
-        type.detailSubtitleMaxLines,
-      ) + gapAfterSub;
-  } else {
-    cursorY += gapAfterSub;
+    lastBaseline = wrapText(
+      ctx,
+      options.subtitle,
+      cx,
+      subFirstBaseline,
+      maxTextWidth,
+      subLineHeight,
+      type.detailSubtitleMaxLines,
+    );
+    cursorY = lastBaseline;
   }
 
   if (bodyBlocks.length > 0) {
+    const prevSize = options.subtitle && subtitleH > 0 ? subSize : titleSize;
+    const bodyFirstBaseline = nextBaseline(
+      lastBaseline,
+      prevSize,
+      bodySize,
+      subToBodyGap,
+    );
     ctx.fillStyle = "rgba(226, 232, 242, 0.95)";
     ctx.font = `500 ${bodySize}px ${fontStack}`;
-    cursorY += gapBeforeBody * bodyGrow;
-    for (const line of bodyBlocks) {
+    cursorY = bodyFirstBaseline;
+    for (let i = 0; i < bodyBlocks.length; i += 1) {
+      const line = bodyBlocks[i] ?? "";
+      lastBaseline = wrapText(
+        ctx,
+        line,
+        cx,
+        cursorY,
+        maxTextWidth,
+        bodyLineHeight,
+        type.detailBodyMaxLinesPerBlock,
+      );
       cursorY =
-        wrapText(
-          ctx,
-          line,
-          cx,
-          cursorY,
-          maxTextWidth,
-          bodyLineHeight,
-          type.detailBodyMaxLinesPerBlock,
-        ) + Math.round(bodyLineHeight * 0.85);
+        lastBaseline +
+        Math.round(bodySize * 0.28) +
+        Math.round(bodyLineHeight * 0.35) +
+        Math.round(bodySize * 0.82);
     }
   }
 }
