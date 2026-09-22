@@ -11,8 +11,14 @@ export const SEO_CONFIG = {
   description: profile.introduction,
   /** Absolute site origin (no trailing slash). Override via VITE_SITE_URL. */
   siteUrl: ENV.siteUrl,
-  /** Public path for Open Graph / Twitter image (hologram portrait). */
-  ogImagePath: "/og/portrait.webp",
+  /**
+   * Public OG image (JPEG 1200×630). WhatsApp / Facebook / LinkedIn
+   * prefer JPEG over WebP for link previews.
+   */
+  ogImagePath: "/og/portrait.jpg",
+  ogImageType: "image/jpeg",
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
   ogImageAlt: `${profile.name}, ${profile.title}`,
   twitterHandle: ENV.twitterHandle,
   locale: "en_US",

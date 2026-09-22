@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/webp" href="/og/portrait.webp" />
+    <link rel="icon" type="image/jpeg" href="/og/portrait.jpg" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1"
@@ -17,8 +17,9 @@
       content="Jdidi Daoud, Fullstack Software Engineer, React, React Native, Node.js, Three.js, portfolio, Tunisia"
     />
     <meta name="author" content="Jdidi Daoud" />
-    <link rel="canonical" href="https://jdidi94.github.io/" />
+    <link rel="canonical" href="%SITE_URL%/" />
 
+    <!-- Open Graph: absolute HTTPS URLs + JPEG for WhatsApp / Facebook / LinkedIn -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Jdidi Daoud · Neon Portfolio" />
     <meta
@@ -29,8 +30,12 @@
       property="og:description"
       content="Fullstack Software Engineer with 3+ years building scalable web and mobile apps with React, React Native, Node.js, and real-time systems."
     />
-    <meta property="og:url" content="https://jdidi94.github.io/" />
-    <meta property="og:image" content="https://jdidi94.github.io/og/portrait.webp" />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:image" content="%SITE_URL%/og/portrait.jpg" />
+    <meta property="og:image:secure_url" content="%SITE_URL%/og/portrait.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
       content="Jdidi Daoud, Fullstack Software Engineer"
@@ -46,10 +51,7 @@
       name="twitter:description"
       content="Fullstack Software Engineer with 3+ years building scalable web and mobile apps with React, React Native, Node.js, and real-time systems."
     />
-    <meta
-      name="twitter:image"
-      content="https://jdidi94.github.io/og/portrait.webp"
-    />
+    <meta name="twitter:image" content="%SITE_URL%/og/portrait.jpg" />
     <meta
       name="twitter:image:alt"
       content="Jdidi Daoud, Fullstack Software Engineer"

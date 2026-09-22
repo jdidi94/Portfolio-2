@@ -31,8 +31,17 @@ function upsertLink(rel: string, href: string): void {
  * Complements static tags in `index.html` for local / preview hosts.
  */
 export function applySeoTags(): void {
-  const { title, description, siteName, ogImageAlt, locale, keywords } =
-    SEO_CONFIG;
+  const {
+    title,
+    description,
+    siteName,
+    ogImageAlt,
+    ogImageType,
+    ogImageWidth,
+    ogImageHeight,
+    locale,
+    keywords,
+  } = SEO_CONFIG;
   const url = absoluteSeoUrl("/");
   const image = absoluteSeoUrl(SEO_CONFIG.ogImagePath);
 
@@ -48,6 +57,10 @@ export function applySeoTags(): void {
   upsertMeta("property", "og:description", description);
   upsertMeta("property", "og:url", url);
   upsertMeta("property", "og:image", image);
+  upsertMeta("property", "og:image:secure_url", image);
+  upsertMeta("property", "og:image:type", ogImageType);
+  upsertMeta("property", "og:image:width", String(ogImageWidth));
+  upsertMeta("property", "og:image:height", String(ogImageHeight));
   upsertMeta("property", "og:image:alt", ogImageAlt);
   upsertMeta("property", "og:locale", locale);
 
